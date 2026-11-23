@@ -1,0 +1,2528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StokRumah &amp; Shopee Budget Planner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    // Konfigurasi palet warna Cotton Candy & Bluesky serta aksen Gold pada Tailwind CSS
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+          },
+          colors: {
+            skywash: {
+              50: '#F2F9FF',
+              100: '#DCF0FF',
+              200: '#B8E0FF',
+              300: '#82CAFF',
+              400: '#3CA6FF'
+            },
+            ocean: {
+              50: '#EEF6FF',
+              100: '#D4E8FF',
+              200: '#A9D1FF',
+              300: '#6EB2FF',
+              400: '#2E8BFF',
+              500: '#196CE0',
+              600: '#1250B0'
+            },
+            cotton: {
+              50: '#FFF5FA',
+              100: '#FFE3F1',
+              200: '#FFC2E0',
+              300: '#FF94C7',
+              400: '#F264A8',
+              500: '#D9438B'
+            },
+            lagoon: {
+              50: '#F0FDFA',
+              100: '#CCFBF1',
+              200: '#99F6E4',
+              300: '#5EEAD4',
+              400: '#14B8A6'
+            },
+            gold: {
+              50: '#FFFBEB',
+              100: '#FEF3C7',
+              200: '#FDE68A',
+              300: '#FCD34D',
+              400: '#F59E0B',
+              500: '#D97706',
+              600: '#B45309'
+            }
+          },
+          boxShadow: {
+            soft: '0 14px 32px -12px rgba(25, 108, 224, 0.13), 0 6px 16px -6px rgba(242, 100, 168, 0.12)',
+            card: '0 8px 22px -10px rgba(25, 108, 224, 0.11), 0 3px 10px -4px rgba(255, 148, 199, 0.14)'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* Gaya visual Cotton Candy & Bluesky dengan polkadot dan tombol toggle kaca beraksen Gold */
+    * {
+      font-style: normal !important;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #F6FBFF;
+      background-image:
+        radial-gradient(rgba(56, 166, 255, 0.18) 1.6px, transparent 1.6px),
+        radial-gradient(rgba(242, 100, 168, 0.18) 1.6px, transparent 1.6px),
+        radial-gradient(circle at 12% 8%, rgba(184, 224, 255, 0.52), transparent 38%),
+        radial-gradient(circle at 90% 12%, rgba(255, 194, 224, 0.50), transparent 38%),
+        linear-gradient(180deg, #F7FCFF 0%, #FFF7FB 55%, #F2FAFF 100%);
+      background-size: 26px 26px, 26px 26px, 100% 100%, 100% 100%, 100% 100%;
+      background-position: 0 0, 13px 13px, 0 0, 0 0, 0 0;
+      color: #0F172A;
+      min-height: 100vh;
+    }
+
+    .polka-accent {
+      background-image:
+        radial-gradient(rgba(56, 166, 255, 0.24) 1.5px, transparent 1.5px),
+        radial-gradient(rgba(242, 100, 168, 0.24) 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+      background-position: 0 0, 10px 10px;
+    }
+
+    @keyframes floatSoft {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-3px); }
+    }
+
+    .cute-float {
+      animation: floatSoft 3.2s ease-in-out infinite;
+    }
+
+    .smooth-panel {
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .smooth-panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px -12px rgba(25, 108, 224, 0.16), 0 6px 16px -4px rgba(242, 100, 168, 0.16);
+    }
+
+    .toggle-glass {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(245, 158, 11, 0.38);
+      color: #92400E;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 4px 12px -6px rgba(217, 119, 6, 0.25);
+    }
+
+    .toggle-glass:hover {
+      background-color: rgba(254, 243, 199, 0.75);
+      border-color: rgba(217, 119, 6, 0.6);
+      color: #78350F;
+    }
+
+    .toggle-glass-active {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.85), rgba(217, 119, 6, 0.9));
+      border: 1px solid rgba(254, 243, 199, 0.9);
+      color: #FFFFFF;
+      box-shadow: 0 6px 16px -6px rgba(180, 83, 9, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #FFFFFF !important;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased text-slate-900">
+  <!-- Halaman Utama Portal Profil ("Hai! Masuk Dulu Yuk") -->
+  <section id="profilePortalView" aria-label="Masuk atau Daftar Profil" class="min-h-screen flex items-center justify-center px-4 py-8 sm:px-6">
+    <div class="smooth-panel relative overflow-hidden w-full max-w-xl rounded-3xl bg-white/95 border-2 border-cotton-200 p-6 sm:p-8 shadow-soft">
+      <div class="polka-accent absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-75 pointer-events-none"></div>
+      <div class="relative">
+        <div class="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-gradient-to-r from-skywash-100 to-cotton-100 border border-cotton-200 text-ocean-600 text-[11px] font-extrabold uppercase tracking-wider">
+          <span>☁️</span>
+          <span>StokRumah &amp; Shopee Budget Planner</span>
+          <span>🍬</span>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-extrabold text-slate-950 mt-2.5 flex items-center gap-2">
+          <span>Hai! Masuk Dulu Yuk</span>
+          <span class="cute-float text-lg">✨</span>
+        </h1>
+      </div>
+
+      <!-- Notifikasi pada Portal Profil -->
+      <div id="portalToastBanner" class="hidden mt-4 px-4 py-3 rounded-2xl border text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 transition-all duration-200">
+        <span id="portalToastMessage"></span>
+        <button type="button" id="closePortalToastBtn" class="text-xs font-bold underline cursor-pointer">Tutup</button>
+      </div>
+
+      <!-- Panduan User Baru -->
+      <div id="newUserGuideBox" class="mt-4 px-4 py-3 rounded-2xl bg-skywash-50/90 border border-skywash-200 text-xs text-slate-700">
+        <span class="font-extrabold text-ocean-600">User baru?</span> Klik kartu <strong>+ Tambah User</strong> untuk membuat profil dengan nama, username, gender, dan PIN 4 angka.
+      </div>
+
+      <!-- Grid Profil Tersimpan & Kartu + Tambah User -->
+      <div class="mt-6">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <h2 class="text-xs font-extrabold uppercase tracking-wider text-cotton-500">🎀 Pilih profil kamu dulu</h2>
+        </div>
+        <div id="profileListGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5"></div>
+      </div>
+
+      <!-- Form Buat Profil Baru (Terbuka saat klik + Tambah User) -->
+      <div id="createProfilePanel" class="hidden mt-5 pt-5 border-t border-dashed border-cotton-200">
+        <div class="flex items-center justify-between gap-2 mb-2.5">
+          <span class="text-xs font-extrabold uppercase tracking-wider text-ocean-600">🐣 Bikin Profil Baru</span>
+          <button
+            type="button"
+            id="closeCreateProfileBtn"
+            class="text-xs font-bold text-slate-500 hover:text-cotton-500 cursor-pointer"
+          >
+            Batal
+          </button>
+        </div>
+        <form id="createProfileForm">
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+            <input
+              type="text"
+              id="newProfileNameInput"
+              placeholder="Nama Profil (cth: Rumah Awan)"
+              class="sm:col-span-4 px-3.5 py-2.5 rounded-2xl border-2 border-skywash-200 bg-cotton-50/60 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+            />
+            <input
+              type="text"
+              id="newProfileUsernameInput"
+              placeholder="Username"
+              class="sm:col-span-3 px-3.5 py-2.5 rounded-2xl border-2 border-skywash-200 bg-cotton-50/60 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+            />
+            <select
+              id="newProfileGenderInput"
+              aria-label="Gender"
+              class="sm:col-span-2 px-2.5 py-2.5 rounded-2xl border-2 border-skywash-200 bg-cotton-50/60 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+            >
+              <option value="female">👧 Cewek</option>
+              <option value="male">👦 Cowok</option>
+            </select>
+            <input
+              type="password"
+              id="newProfilePinInput"
+              inputmode="numeric"
+              maxlength="4"
+              placeholder="PIN 4 angka"
+              class="sm:col-span-3 px-3.5 py-2.5 rounded-2xl border-2 border-skywash-200 bg-cotton-50/60 text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+            />
+          </div>
+          <button
+            type="submit"
+            class="mt-3 w-full sm:w-auto px-5 py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-ocean-500 to-cotton-400 hover:from-ocean-600 hover:to-cotton-500 text-white shadow-sm transition cursor-pointer"
+          >
+            + Buat &amp; Masuk Yuk!
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dashboard Utama ("Monthly Stock & Budget") -->
+  <div id="dashboardAppShell" class="hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- Header Aplikasi & Kontrol Realtime -->
+    <header class="smooth-panel relative overflow-hidden rounded-3xl bg-white/95 border-2 border-skywash-200 shadow-soft p-5 sm:p-6">
+      <div class="polka-accent absolute -bottom-8 -left-8 w-36 h-36 rounded-full opacity-60 pointer-events-none"></div>
+      <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="space-y-1.5">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-skywash-100 to-cotton-100 border border-cotton-200 text-ocean-600 text-[11px] font-extrabold uppercase tracking-wider">
+            <span>☁️ StokRumah &amp; Shopee</span>
+            <span id="activeProfileBadge" class="px-2 py-0.5 rounded-full bg-white text-cotton-500 border border-cotton-200">Profil Aktif</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-950 flex items-center gap-2">
+            <span>Monthly Stock &amp; Budget</span>
+            <span class="cute-float text-lg">🍬</span>
+          </h1>
+          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
+            <span class="px-2.5 py-0.5 rounded-full bg-cotton-100 text-cotton-500 font-bold">✨ Harga Realtime</span>
+            <span id="realtimeTimestamp" class="px-2.5 py-0.5 rounded-full bg-skywash-100 text-ocean-600 font-bold">--:--:-- WIB</span>
+            <span id="realtimeMarketSummary" class="text-xs text-slate-500">Sinkronisasi harga realtime Shopee siap</span>
+          </div>
+        </div>
+
+        <div class="no-print flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            id="refreshRealtimePriceBtn"
+            class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-ocean-500 hover:bg-ocean-600 text-white shadow-sm transition cursor-pointer"
+          >
+            🔄 Refresh Harga
+          </button>
+          <button
+            type="button"
+            id="toggleAutoSyncBtn"
+            class="toggle-glass toggle-glass-active px-3.5 py-2 rounded-2xl text-xs font-extrabold transition cursor-pointer"
+          >
+            Auto-Sync: ON (15d)
+          </button>
+          <button
+            type="button"
+            id="logoutProfileBtn"
+            class="px-3.5 py-2 rounded-2xl text-xs font-extrabold bg-slate-900 hover:bg-slate-800 text-white transition cursor-pointer"
+          >
+            👋 Keluar
+          </button>
+        </div>
+      </div>
+
+      <!-- Banner Notifikasi / Toast -->
+      <div id="toastBanner" class="hidden mt-4 px-4 py-3 rounded-2xl border text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 transition-all duration-200">
+        <span id="toastMessage"></span>
+        <button type="button" id="closeToastBtn" class="no-print text-xs font-bold underline cursor-pointer">Tutup</button>
+      </div>
+    </header>
+
+    <!-- Ringkasan Metrik & Progres Budget -->
+    <section aria-label="Ringkasan Budget dan Stok" class="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="smooth-panel rounded-3xl bg-white border-2 border-skywash-200 p-4 sm:p-5 shadow-soft">
+        <p class="text-[11px] font-extrabold text-ocean-600 uppercase tracking-wider">🧺 Barang Bulanan</p>
+        <p id="metricTotalItems" class="text-xl sm:text-2xl font-extrabold text-slate-950 mt-1">0 item</p>
+        <p id="metricUrgentItems" class="text-xs font-bold text-cotton-500 mt-1">0 barang mau abis</p>
+      </div>
+
+      <div class="smooth-panel rounded-3xl bg-white border-2 border-cotton-200 p-4 sm:p-5 shadow-soft">
+        <label for="budgetInput" class="block text-[11px] font-extrabold text-cotton-500 uppercase tracking-wider">💰 Budget Belanja (Rp)</label>
+        <input
+          type="number"
+          id="budgetInput"
+          min="0"
+          step="1000"
+          value="0"
+          class="mt-1 w-full px-3 py-1.5 rounded-xl border border-cotton-200 bg-cotton-50/70 text-base sm:text-lg font-extrabold text-slate-950 focus:outline-none focus:border-ocean-400 transition"
+        />
+        <p id="metricBudgetNote" class="text-xs text-slate-500 mt-1">Terpakai 0% dari anggaran</p>
+      </div>
+
+      <div class="smooth-panel rounded-3xl bg-white border-2 border-skywash-200 p-4 sm:p-5 shadow-soft">
+        <p class="text-[11px] font-extrabold text-ocean-600 uppercase tracking-wider">🛍️ Keranjang Shopee</p>
+        <p id="metricCartTotal" class="text-xl sm:text-2xl font-extrabold text-ocean-500 mt-1">Rp0</p>
+        <p id="metricCartCount" class="text-xs text-slate-500 mt-1">0 produk • 0 pcs</p>
+      </div>
+
+      <div class="smooth-panel rounded-3xl bg-white border-2 border-cotton-200 p-4 sm:p-5 shadow-soft">
+        <p class="text-[11px] font-extrabold text-cotton-500 uppercase tracking-wider">🌈 Sisa Budget</p>
+        <p id="metricRemainingValue" class="text-xl sm:text-2xl font-extrabold text-teal-700 mt-1">Rp0</p>
+        <p id="metricRemainingNote" class="text-xs text-teal-700 font-semibold mt-1">Aman dalam batas budget</p>
+      </div>
+    </section>
+
+    <!-- Bar Persentase Pemakaian Budget -->
+    <section class="smooth-panel mt-4 rounded-3xl bg-white/95 border-2 border-skywash-200 p-4 shadow-soft">
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <span class="text-xs font-extrabold text-slate-800">🍭 Pemakaian Budget</span>
+        <span id="budgetUsagePercent" class="text-xs font-extrabold text-cotton-500">0%</span>
+      </div>
+      <div class="w-full h-3 rounded-full bg-gradient-to-r from-skywash-100 to-cotton-100 overflow-hidden p-0.5">
+        <div id="budgetProgressBar" class="h-full bg-gradient-to-r from-ocean-400 to-cotton-400 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </section>
+
+    <!-- Etalase Online Multi-Halaman dengan Filter Toko, Kategori & Pengurutan -->
+    <section aria-label="Etalase Online" class="smooth-panel relative overflow-hidden mt-6 rounded-3xl bg-white/95 border-2 border-cotton-200 p-5 sm:p-6 shadow-soft">
+      <div class="polka-accent absolute -top-6 -right-6 w-32 h-32 rounded-full opacity-55 pointer-events-none"></div>
+      <div class="relative flex flex-col gap-3 pb-4 border-b border-dashed border-cotton-200">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h2 class="text-lg font-extrabold tracking-tight text-slate-950 flex items-center gap-2">
+              <span>Etalase Online</span>
+              <span class="text-base">🧸</span>
+            </h2>
+            <span id="etalaseCatalogBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-cotton-100 text-cotton-500">0 produk</span>
+          </div>
+
+          <!-- Toggle Kategori Etalase -->
+          <div class="no-print flex items-center gap-1.5 flex-wrap" role="tablist" aria-label="Kategori Etalase">
+            <button type="button" data-tab="ALL" class="etalase-tab-btn toggle-glass toggle-glass-active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Semua
+            </button>
+            <button type="button" data-tab="Dapur & Bumbu" class="etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Dapur &amp; Bumbu
+            </button>
+            <button type="button" data-tab="Laundry" class="etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Laundry
+            </button>
+            <button type="button" data-tab="Bahan Pokok" class="etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Bahan Pokok
+            </button>
+            <button type="button" data-tab="Tisu & Harian" class="etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Tisu &amp; Harian
+            </button>
+            <button type="button" data-tab="Skincare" class="etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer">
+              Skincare
+            </button>
+          </div>
+        </div>
+
+        <!-- Baris Toggle Urutan (Terlaris / Termurah / Termahal) & Tipe Toko (Official / Trusted) -->
+        <div class="no-print flex flex-col md:flex-row md:items-center md:justify-between gap-2.5 pt-1">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mr-1">Urutkan:</span>
+            <button type="button" data-sort="TERLARIS" class="etalase-sort-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              🔥 Terlaris
+            </button>
+            <button type="button" data-sort="TERMURAH" class="etalase-sort-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              💸 Termurah
+            </button>
+            <button type="button" data-sort="TERMAHAL" class="etalase-sort-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              💎 Termahal
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mr-1">Toko:</span>
+            <button type="button" data-store="ALL" class="etalase-store-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              Semua Toko
+            </button>
+            <button type="button" data-store="OFFICIAL" class="etalase-store-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              🏅 Official Store
+            </button>
+            <button type="button" data-store="TRUSTED" class="etalase-store-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              🛡️ Trusted Store
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Produk Per Halaman -->
+      <div id="etalaseGrid" class="relative mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+      <!-- Navigasi Halaman Etalase -->
+      <div class="no-print relative mt-5 pt-4 border-t border-dashed border-skywash-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <span id="etalasePageInfo" class="text-xs font-semibold text-slate-500">Halaman 1 dari 1</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            id="etalasePrevPage"
+            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-skywash-100 hover:bg-cotton-100 disabled:opacity-40 text-ocean-600 transition cursor-pointer"
+          >
+            Sebelumnya
+          </button>
+          <div id="etalasePageDots" class="flex items-center gap-1 flex-wrap"></div>
+          <button
+            type="button"
+            id="etalaseNextPage"
+            class="px-3 py-1.5 rounded-xl text-xs font-bold bg-skywash-100 hover:bg-cotton-100 disabled:opacity-40 text-ocean-600 transition cursor-pointer"
+          >
+            Berikutnya
+          </button>
+          <div class="flex items-center gap-1 ml-1">
+            <input
+              type="number"
+              id="etalaseJumpInput"
+              min="1"
+              step="1"
+              placeholder="Hal"
+              aria-label="Loncat ke halaman etalase"
+              class="w-14 px-2 py-1 rounded-lg border border-skywash-200 bg-skywash-50/70 text-xs font-bold text-slate-900 focus:outline-none focus:border-cotton-400"
+            />
+            <button
+              type="button"
+              id="etalaseJumpBtn"
+              class="px-2.5 py-1 rounded-lg text-xs font-bold bg-cotton-100 hover:bg-cotton-200/80 text-cotton-500 transition cursor-pointer"
+            >
+              Go
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kolom Utama: Stok Bulanan Rumah (Kiri) & Referensi Harga Shopee (Kanan) -->
+    <main class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- Panel Stok Bulanan Rumah -->
+      <section class="smooth-panel lg:col-span-7 rounded-3xl bg-white/95 border-2 border-skywash-200 p-5 sm:p-6 shadow-soft">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-950 flex items-center gap-1.5">
+            <span>Stok Bulanan Rumah</span>
+            <span>🏡</span>
+          </h2>
+
+          <div class="no-print flex items-center gap-1.5 flex-wrap">
+            <button type="button" data-filter="ALL" class="stock-filter-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              Semua
+            </button>
+            <button type="button" data-filter="MAU_ABIS" class="stock-filter-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              Mau Abis!
+            </button>
+            <button type="button" data-filter="AMAN" class="stock-filter-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer">
+              Aman
+            </button>
+          </div>
+        </div>
+
+        <!-- Form Tambah Barang Bulanan -->
+        <form id="addItemForm" class="no-print mt-4 p-3.5 rounded-2xl bg-gradient-to-r from-skywash-50 to-cotton-50 border border-cotton-200 grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
+          <div class="sm:col-span-4">
+            <label for="newItemName" class="block text-[11px] font-bold text-slate-700 mb-1">Nama Barang</label>
+            <input
+              type="text"
+              id="newItemName"
+              placeholder="Contoh: Kecap Manis / Moisturizer"
+              class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:border-cotton-400 transition"
+            />
+          </div>
+
+          <div class="sm:col-span-3">
+            <label for="newItemCategory" class="block text-[11px] font-bold text-slate-700 mb-1">Kategori</label>
+            <select
+              id="newItemCategory"
+              class="w-full px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:border-cotton-400 transition"
+            >
+              <option value="Dapur & Bumbu">Dapur &amp; Bumbu</option>
+              <option value="Laundry">Laundry</option>
+              <option value="Bahan Pokok">Bahan Pokok</option>
+              <option value="Tisu & Harian">Tisu &amp; Harian</option>
+              <option value="Skincare">Skincare</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="newItemQty" class="block text-[11px] font-bold text-slate-700 mb-1">Stok</label>
+            <input
+              type="number"
+              id="newItemQty"
+              min="0"
+              step="1"
+              value="0"
+              class="w-full px-2.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold focus:outline-none focus:border-cotton-400 transition"
+            />
+          </div>
+
+          <div class="sm:col-span-3">
+            <button
+              type="submit"
+              class="w-full px-3.5 py-2 rounded-xl text-xs font-extrabold bg-gradient-to-r from-ocean-500 to-cotton-400 hover:from-ocean-600 hover:to-cotton-500 text-white shadow-sm transition cursor-pointer"
+            >
+              + Tambah
+            </button>
+          </div>
+        </form>
+
+        <!-- Daftar Barang Bulanan -->
+        <div id="inventoryList" class="mt-4 space-y-3"></div>
+      </section>
+
+      <!-- Panel Referensi Harga & Keranjang Shopee -->
+      <section class="smooth-panel lg:col-span-5 rounded-3xl bg-white/95 border-2 border-cotton-200 p-5 sm:p-6 shadow-soft">
+        <div class="flex items-center justify-between gap-2">
+          <h2 class="text-base sm:text-lg font-extrabold tracking-tight text-slate-950 flex items-center gap-1.5">
+            <span>Harga Shopee</span>
+            <span>🛍️</span>
+          </h2>
+          <button
+            type="button"
+            id="autoSelectUrgentBtn"
+            class="no-print px-3 py-1.5 rounded-xl text-xs font-extrabold bg-cotton-100 hover:bg-cotton-200/70 text-cotton-500 transition cursor-pointer"
+          >
+            ✨ Pilih Barang Mau Abis
+          </button>
+        </div>
+
+        <div class="no-print mt-3 flex flex-col sm:flex-row gap-2">
+          <input
+            type="search"
+            id="shopeeSearchInput"
+            placeholder="Cari merek, bumbu, skincare..."
+            class="flex-1 px-3.5 py-2 rounded-xl border border-slate-200 bg-skywash-50/60 text-xs font-medium focus:outline-none focus:border-cotton-400 transition"
+          />
+          <div class="flex items-center gap-1 flex-wrap">
+            <button type="button" data-badge="ALL" class="badge-filter-btn toggle-glass toggle-glass-active px-2.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
+              Semua
+            </button>
+            <button type="button" data-badge="TERMURAH" class="badge-filter-btn toggle-glass px-2.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
+              Termurah
+            </button>
+            <button type="button" data-badge="TERLARIS" class="badge-filter-btn toggle-glass px-2.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer">
+              Terlaris
+            </button>
+          </div>
+        </div>
+
+        <div id="shopeeProductList" class="mt-4 space-y-3 max-h-[780px] overflow-y-auto pr-1"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Kunci penyimpanan lokal terpisah untuk profil dan data per akun
+    const STORAGE_KEY = 'stokrumah_shopee_budget_v2';
+    const PROFILES_STORAGE_KEY = 'stokrumah_profiles_v2';
+    const ACTIVE_PROFILE_KEY = 'stokrumah_active_profile_id_v2';
+    const AUTO_SYNC_INTERVAL_MS = 15000;
+    let autoSyncTimerId = null;
+    let profilesStore = [];
+    let activeProfileId = '';
+    let isLoggedOutToPortal = false;
+    let activePinPromptProfileId = '';
+
+    // Stok bulanan awal mulai dari kuantitas numerik 0 mencakup Dapur & Bumbu (bumbu dapur), Laundry, Bahan Pokok, Tisu & Harian, dan Skincare
+    const DEFAULT_INVENTORY = [
+      {
+        id: 'inv-dish-450',
+        name: 'Sunlight Jeruk Nipis Refill 650ml',
+        category: 'Dapur & Bumbu',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pouch',
+        icon: 'dish_soap',
+        linkedKeyword: 'sabun cuci piring',
+        shopUrl: 'https://shopee.co.id/search?keyword=Sunlight%20Jeruk%20Nipis%20Refill%20650ml'
+      },
+      {
+        id: 'inv-bango-kecap',
+        name: 'Bango Kecap Manis Refill 520ml',
+        category: 'Dapur & Bumbu',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pouch',
+        icon: 'spice',
+        linkedKeyword: 'kecap manis',
+        shopUrl: 'https://shopee.co.id/search?keyword=Bango%20Kecap%20Manis%20Refill%20520ml'
+      },
+      {
+        id: 'inv-saori-tiram',
+        name: 'Saori Saus Tiram 270ml Bumbu Masak',
+        category: 'Dapur & Bumbu',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'botol',
+        icon: 'spice',
+        linkedKeyword: 'saus tiram',
+        shopUrl: 'https://shopee.co.id/search?keyword=Saori%20Saus%20Tiram%20270ml'
+      },
+      {
+        id: 'inv-refina-garam',
+        name: 'Refina Garam Meja Beryodium 500g',
+        category: 'Dapur & Bumbu',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pack',
+        icon: 'spice',
+        linkedKeyword: 'garam beryodium',
+        shopUrl: 'https://shopee.co.id/search?keyword=Refina%20Garam%20Meja%20Beryodium%20500g'
+      },
+      {
+        id: 'inv-bumbu-rempah',
+        name: 'Bumbu Bubuk Bawang Putih, Lada Putih & Kaldu Ayam',
+        category: 'Dapur & Bumbu',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pack',
+        icon: 'spice',
+        linkedKeyword: 'bumbu dapur',
+        shopUrl: 'https://shopee.co.id/search?keyword=Bumbu%20Bubuk%20Bawang%20Putih%20Lada%20Putih%20Kaldu'
+      },
+      {
+        id: 'inv-detergent-700',
+        name: 'Gentle Gen Deterjen Cair Konsentrat 700ml',
+        category: 'Laundry',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pouch',
+        icon: 'detergent',
+        linkedKeyword: 'detergen cair',
+        shopUrl: 'https://shopee.co.id/search?keyword=Gentle%20Gen%20Deterjen%20Cair%20700ml'
+      },
+      {
+        id: 'inv-downy-softener',
+        name: 'Downy Pelembut & Pewangi Pakaian Refill 900ml',
+        category: 'Laundry',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pouch',
+        icon: 'detergent',
+        linkedKeyword: 'pelembut pakaian',
+        shopUrl: 'https://shopee.co.id/search?keyword=Downy%20Pelembut%20Pewangi%20Pakaian%20900ml'
+      },
+      {
+        id: 'inv-oil-2l',
+        name: 'Minyak Goreng Filma 2 Liter Refill',
+        category: 'Bahan Pokok',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'liter',
+        icon: 'cooking_oil',
+        linkedKeyword: 'minyak goreng',
+        shopUrl: 'https://shopee.co.id/search?keyword=minyak%20goreng%20filma%202%20liter'
+      },
+      {
+        id: 'inv-rice-5kg',
+        name: 'Beras Premium 5kg Pulen Rojolele',
+        category: 'Bahan Pokok',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'kg',
+        icon: 'rice',
+        linkedKeyword: 'beras',
+        shopUrl: 'https://shopee.co.id/search?keyword=Beras%20Premium%205kg%20Rojolele'
+      },
+      {
+        id: 'inv-tissue-5pcs',
+        name: 'Paseo Smart Facial Tissue 5 Pack 250 Sheets',
+        category: 'Tisu & Harian',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'pack',
+        icon: 'tissue',
+        linkedKeyword: 'tisu wajah',
+        shopUrl: 'https://shopee.co.id/search?keyword=Paseo%20Facial%20Tissue%205%20Pack'
+      },
+      {
+        id: 'inv-skintific-gel',
+        name: 'Skintific 5X Ceramide Barrier Moisture Gel 30g',
+        category: 'Skincare',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'jar',
+        icon: 'skincare',
+        linkedKeyword: 'moisturizer ceramide',
+        shopUrl: 'https://shopee.co.id/search?keyword=Skintific%205X%20Ceramide%20Barrier%20Moisture%20Gel%2030g'
+      },
+      {
+        id: 'inv-wardah-sunscreen',
+        name: 'Wardah UV Shield Aqua Fresh Essence SPF 50 PA++++',
+        category: 'Skincare',
+        qty: 0,
+        minQty: 0,
+        targetQty: 2,
+        unit: 'tube',
+        icon: 'skincare',
+        linkedKeyword: 'sunscreen spf 50',
+        shopUrl: 'https://shopee.co.id/search?keyword=Wardah%20UV%20Shield%20Aqua%20Fresh%20Essence%20SPF%2050'
+      }
+    ];
+
+    // Membangun katalog produk multi-merek dari Official Store & Trusted Store di berbagai kategori dan halaman
+    function buildCatalogProducts() {
+      const baseItems = [
+        // Dapur & Bumbu (termasuk bumbu dapur lengkap)
+        {
+          id: 'cat-1',
+          name: 'Bango Kecap Manis Refill 520ml Bumbu Masak',
+          category: 'Dapur & Bumbu',
+          storeName: 'Unilever Official Store',
+          storeType: 'OFFICIAL',
+          variant: '520ml • Kedelai Hitam Pilihan',
+          price: 21500,
+          badge: 'TERLARIS',
+          popularity: 99,
+          icon: 'spice',
+          keyword: 'kecap manis',
+          shopUrl: 'https://shopee.co.id/search?keyword=Bango%20Kecap%20Manis%20Refill%20520ml'
+        },
+        {
+          id: 'cat-2',
+          name: 'Saori Saus Tiram 270ml Tumis & Masakan',
+          category: 'Dapur & Bumbu',
+          storeName: 'Ajinomoto Official Shop',
+          storeType: 'OFFICIAL',
+          variant: '270ml • Ekstrak Tiram Asli',
+          price: 15800,
+          badge: 'TERLARIS',
+          popularity: 95,
+          icon: 'spice',
+          keyword: 'saus tiram',
+          shopUrl: 'https://shopee.co.id/search?keyword=Saori%20Saus%20Tiram%20270ml'
+        },
+        {
+          id: 'cat-3',
+          name: 'Refina Garam Meja Beryodium Halus 500g',
+          category: 'Dapur & Bumbu',
+          storeName: 'Dapur Nusantara Trusted',
+          storeType: 'TRUSTED',
+          variant: '500g • Beryodium Murni',
+          price: 7500,
+          badge: 'TERMURAH',
+          popularity: 91,
+          icon: 'spice',
+          keyword: 'garam beryodium',
+          shopUrl: 'https://shopee.co.id/search?keyword=Refina%20Garam%20Meja%20500g'
+        },
+        {
+          id: 'cat-4',
+          name: 'Desaku Ketumbar & Kunyit Bubuk Sachet 15g (Isi 12)',
+          category: 'Dapur & Bumbu',
+          storeName: 'Pasar Rempah Trusted Store',
+          storeType: 'TRUSTED',
+          variant: '12 Sachet • Rempah Asli',
+          price: 12400,
+          badge: 'TERMURAH',
+          popularity: 88,
+          icon: 'spice',
+          keyword: 'bumbu dapur',
+          shopUrl: 'https://shopee.co.id/search?keyword=Desaku%20Ketumbar%20Kunyit%20Bubuk'
+        },
+        {
+          id: 'cat-5',
+          name: 'Royco Kaldu Ayam / Sapi Pelezat Serbaguna 230g',
+          category: 'Dapur & Bumbu',
+          storeName: 'Unilever Official Store',
+          storeType: 'OFFICIAL',
+          variant: '230g • Daging Asli Pilihan',
+          price: 14200,
+          badge: 'TERLARIS',
+          popularity: 96,
+          icon: 'spice',
+          keyword: 'kaldu ayam',
+          shopUrl: 'https://shopee.co.id/search?keyword=Royco%20Kaldu%20Ayam%20230g'
+        },
+        {
+          id: 'cat-6',
+          name: 'Sunlight Jeruk Nipis Sabun Cuci Piring Refill 650ml',
+          category: 'Dapur & Bumbu',
+          storeName: 'Unilever Official Store',
+          storeType: 'OFFICIAL',
+          variant: '650ml • Angkat Lemak Cepat',
+          price: 13500,
+          badge: 'TERLARIS',
+          popularity: 97,
+          icon: 'dish_soap',
+          keyword: 'sabun cuci piring',
+          shopUrl: 'https://shopee.co.id/search?keyword=Sunlight%20Jeruk%20Nipis%20650ml'
+        },
+        {
+          id: 'cat-7',
+          name: 'Mama Lemon Jeruk Nipis Liquid Dish Soap 780ml',
+          category: 'Dapur & Bumbu',
+          storeName: 'Lion Wings Official Store',
+          storeType: 'OFFICIAL',
+          variant: '780ml • Ekstrak Jeruk Nipis',
+          price: 14900,
+          badge: 'TERMURAH',
+          popularity: 89,
+          icon: 'dish_soap',
+          keyword: 'sabun cuci piring',
+          shopUrl: 'https://shopee.co.id/search?keyword=Mama%20Lemon%20Jeruk%20Nipis%20780ml'
+        },
+        {
+          id: 'cat-8',
+          name: 'Kobe Tepung Bumbu Serbaguna Crispy 200g (Pack 3)',
+          category: 'Dapur & Bumbu',
+          storeName: 'Kobe Boga Official',
+          storeType: 'OFFICIAL',
+          variant: '3 x 200g • Renyah Tahan Lama',
+          price: 18600,
+          badge: 'TERLARIS',
+          popularity: 87,
+          icon: 'spice',
+          keyword: 'bumbu dapur',
+          shopUrl: 'https://shopee.co.id/search?keyword=Kobe%20Tepung%20Bumbu%20Serbaguna%20200g'
+        },
+
+        // Laundry
+        {
+          id: 'cat-9',
+          name: 'Gentle Gen Deterjen Cair Konsentrat Morning Breeze 700ml',
+          category: 'Laundry',
+          storeName: 'Lion Wings Official Store',
+          storeType: 'OFFICIAL',
+          variant: '700ml • Formula Tumbuhan Lembut',
+          price: 19800,
+          badge: 'TERLARIS',
+          popularity: 98,
+          icon: 'detergent',
+          keyword: 'detergen cair',
+          shopUrl: 'https://shopee.co.id/search?keyword=Gentle%20Gen%20Deterjen%20Cair%20700ml'
+        },
+        {
+          id: 'cat-10',
+          name: 'Rinso Molto Deterjen Cair Anti Noda 1.5 Liter',
+          category: 'Laundry',
+          storeName: 'Unilever Official Store',
+          storeType: 'OFFICIAL',
+          variant: '1.5 Liter • Bersih Cemerlang',
+          price: 38500,
+          badge: 'TERLARIS',
+          popularity: 94,
+          icon: 'detergent',
+          keyword: 'detergen cair',
+          shopUrl: 'https://shopee.co.id/search?keyword=Rinso%20Molto%20Deterjen%20Cair%201.5L'
+        },
+        {
+          id: 'cat-11',
+          name: 'Downy Mystique Pelembut & Pewangi Pakaian Refill 900ml',
+          category: 'Laundry',
+          storeName: 'P&G Official Store',
+          storeType: 'OFFICIAL',
+          variant: '900ml • Wangi Tahan Lama',
+          price: 34200,
+          badge: 'TERLARIS',
+          popularity: 93,
+          icon: 'detergent',
+          keyword: 'pelembut pakaian',
+          shopUrl: 'https://shopee.co.id/search?keyword=Downy%20Mystique%20Refill%20900ml'
+        },
+        {
+          id: 'cat-12',
+          name: 'SoKlin Softergent Bubuk Lavender & Jasmine 1.8kg',
+          category: 'Laundry',
+          storeName: 'Berkah Homecare Trusted',
+          storeType: 'TRUSTED',
+          variant: '1.8kg • Butiran Pelembut',
+          price: 29900,
+          badge: 'TERMURAH',
+          popularity: 86,
+          icon: 'detergent',
+          keyword: 'detergen bubuk',
+          shopUrl: 'https://shopee.co.id/search?keyword=SoKlin%20Softergent%201.8kg'
+        },
+
+        // Bahan Pokok
+        {
+          id: 'cat-13',
+          name: 'Minyak Goreng Filma Refill Pouch 2 Liter',
+          category: 'Bahan Pokok',
+          storeName: 'Sinar Mas Official Shop',
+          storeType: 'OFFICIAL',
+          variant: '2 Liter • Sawit Pilihan',
+          price: 39800,
+          badge: 'TERLARIS',
+          popularity: 99,
+          icon: 'cooking_oil',
+          keyword: 'minyak goreng',
+          shopUrl: 'https://shopee.co.id/search?keyword=Minyak%20Goreng%20Filma%202L'
+        },
+        {
+          id: 'cat-14',
+          name: 'Beras Setra Ramos / Rojolele Premium 5kg',
+          category: 'Bahan Pokok',
+          storeName: 'Padi Makmur Trusted Store',
+          storeType: 'TRUSTED',
+          variant: '5kg • Pulen & Wangi Alami',
+          price: 74500,
+          badge: 'TERLARIS',
+          popularity: 97,
+          icon: 'rice',
+          keyword: 'beras',
+          shopUrl: 'https://shopee.co.id/search?keyword=Beras%20Premium%205kg'
+        },
+        {
+          id: 'cat-15',
+          name: 'Gulaku Gula Pasir Kuning / Putih Kemasan 1kg',
+          category: 'Bahan Pokok',
+          storeName: 'Sweet Harvest Trusted',
+          storeType: 'TRUSTED',
+          variant: '1kg • Tebu Pilihan',
+          price: 17900,
+          badge: 'TERMURAH',
+          popularity: 90,
+          icon: 'rice',
+          keyword: 'gula pasir',
+          shopUrl: 'https://shopee.co.id/search?keyword=Gulaku%20Gula%20Pasir%201kg'
+        },
+        {
+          id: 'cat-16',
+          name: 'Tropical Minyak Goreng Botol / Pouch 2 Liter',
+          category: 'Bahan Pokok',
+          storeName: 'Tropical Official Store',
+          storeType: 'OFFICIAL',
+          variant: '2 Liter • 2x Penyaringan',
+          price: 38900,
+          badge: 'TERMURAH',
+          popularity: 88,
+          icon: 'cooking_oil',
+          keyword: 'minyak goreng',
+          shopUrl: 'https://shopee.co.id/search?keyword=Tropical%20Minyak%20Goreng%202L'
+        },
+
+        // Tisu & Harian
+        {
+          id: 'cat-17',
+          name: 'Paseo Smart Facial Tissue 250 Sheets (Paket 4 Pack)',
+          category: 'Tisu & Harian',
+          storeName: 'APP Tissue Official',
+          storeType: 'OFFICIAL',
+          variant: '4 Pack x 250 Sheets • Lembut',
+          price: 42500,
+          badge: 'TERLARIS',
+          popularity: 95,
+          icon: 'tissue',
+          keyword: 'tisu wajah',
+          shopUrl: 'https://shopee.co.id/search?keyword=Paseo%20Smart%20Facial%20Tissue%20250'
+        },
+        {
+          id: 'cat-18',
+          name: 'Tessa TP-05 Toilet Tissue Roll 10 Roll Multipack',
+          category: 'Tisu & Harian',
+          storeName: 'Tessa Official Store',
+          storeType: 'OFFICIAL',
+          variant: '10 Roll • Daya Serap Tinggi',
+          price: 36400,
+          badge: 'TERMURAH',
+          popularity: 85,
+          icon: 'tissue',
+          keyword: 'tisu roll',
+          shopUrl: 'https://shopee.co.id/search?keyword=Tessa%20Toilet%20Tissue%2010%20Roll'
+        },
+        {
+          id: 'cat-19',
+          name: 'Lifebuoy Body Wash Total 10 Refill 825ml',
+          category: 'Tisu & Harian',
+          storeName: 'Unilever Official Store',
+          storeType: 'OFFICIAL',
+          variant: '825ml • Perlindungan Harian',
+          price: 35900,
+          badge: 'TERLARIS',
+          popularity: 92,
+          icon: 'body_wash',
+          keyword: 'sabun mandi',
+          shopUrl: 'https://shopee.co.id/search?keyword=Lifebuoy%20Body%20Wash%20825ml'
+        },
+        {
+          id: 'cat-20',
+          name: 'Pepsodent Pasta Gigi Pencegah Gigi Berlubang 190g (2 Pcs)',
+          category: 'Tisu & Harian',
+          storeName: 'Daily Care Trusted Store',
+          storeType: 'TRUSTED',
+          variant: '2 x 190g • Mikro Kalsium Aktif',
+          price: 22800,
+          badge: 'TERMURAH',
+          popularity: 89,
+          icon: 'toothpaste',
+          keyword: 'pasta gigi',
+          shopUrl: 'https://shopee.co.id/search?keyword=Pepsodent%20190g%202%20pcs'
+        },
+
+        // Skincare (merek populer Official & Trusted Store)
+        {
+          id: 'cat-21',
+          name: 'SKINTIFIC 5X Ceramide Barrier Moisture Gel 30g',
+          category: 'Skincare',
+          storeName: 'SKINTIFIC Official Shop',
+          storeType: 'OFFICIAL',
+          variant: '30g • Skin Barrier Moisturizer',
+          price: 129000,
+          badge: 'TERLARIS',
+          popularity: 100,
+          icon: 'skincare',
+          keyword: 'moisturizer ceramide',
+          shopUrl: 'https://shopee.co.id/search?keyword=SKINTIFIC%205X%20Ceramide%20Barrier%20Moisture%20Gel%2030g'
+        },
+        {
+          id: 'cat-22',
+          name: 'Wardah UV Shield Aqua Fresh Essence SPF 50 PA++++ 30ml',
+          category: 'Skincare',
+          storeName: 'Wardah Official Store',
+          storeType: 'OFFICIAL',
+          variant: '30ml • Ringan Tanpa Whitecast',
+          price: 37500,
+          badge: 'TERLARIS',
+          popularity: 97,
+          icon: 'skincare',
+          keyword: 'sunscreen spf 50',
+          shopUrl: 'https://shopee.co.id/search?keyword=Wardah%20UV%20Shield%20Aqua%20Fresh%20Essence%20SPF%2050'
+        },
+        {
+          id: 'cat-23',
+          name: 'Somethinc Niacinamide + Moisture Beet Serum 20ml',
+          category: 'Skincare',
+          storeName: 'Somethinc Official Store',
+          storeType: 'OFFICIAL',
+          variant: '20ml • Brightening & Hydrating',
+          price: 89000,
+          badge: 'TERLARIS',
+          popularity: 94,
+          icon: 'skincare',
+          keyword: 'serum niacinamide',
+          shopUrl: 'https://shopee.co.id/search?keyword=Somethinc%20Niacinamide%20Moisture%20Beet%20Serum%2020ml'
+        },
+        {
+          id: 'cat-24',
+          name: 'Cetaphil Gentle Skin Cleanser 500ml',
+          category: 'Skincare',
+          storeName: 'Cetaphil Official Store',
+          storeType: 'OFFICIAL',
+          variant: '500ml • Kulit Sensitif & Kering',
+          price: 198500,
+          badge: 'TERLARIS',
+          popularity: 96,
+          icon: 'skincare',
+          keyword: 'facial wash',
+          shopUrl: 'https://shopee.co.id/search?keyword=Cetaphil%20Gentle%20Skin%20Cleanser%20500ml'
+        },
+        {
+          id: 'cat-25',
+          name: 'Azarine Hydrasoothe Sunscreen Gel SPF 45 PA++++ 50g',
+          category: 'Skincare',
+          storeName: 'Glow Essentials Trusted',
+          storeType: 'TRUSTED',
+          variant: '50g • Aloe Vera & Green Tea',
+          price: 58000,
+          badge: 'TERMURAH',
+          popularity: 93,
+          icon: 'skincare',
+          keyword: 'sunscreen',
+          shopUrl: 'https://shopee.co.id/search?keyword=Azarine%20Hydrasoothe%20Sunscreen%20Gel%2050g'
+        },
+        {
+          id: 'cat-26',
+          name: 'Kahf Oil and Acne Care Face Wash 100ml',
+          category: 'Skincare',
+          storeName: 'Kahf Official Store',
+          storeType: 'OFFICIAL',
+          variant: '100ml • HydroBalance & Mediterranean Matcha',
+          price: 41500,
+          badge: 'TERMURAH',
+          popularity: 87,
+          icon: 'skincare',
+          keyword: 'face wash',
+          shopUrl: 'https://shopee.co.id/search?keyword=Kahf%20Oil%20and%20Acne%20Care%20Face%20Wash%20100ml'
+        },
+        {
+          id: 'cat-27',
+          name: 'Glad2Glow Centella Allantoin Soothing Gel Moisturizer 55g',
+          category: 'Skincare',
+          storeName: 'K-Beauty Pantry Trusted',
+          storeType: 'TRUSTED',
+          variant: '55g • Menenangkan Kemerahan',
+          price: 46500,
+          badge: 'TERMURAH',
+          popularity: 91,
+          icon: 'skincare',
+          keyword: 'moisturizer',
+          shopUrl: 'https://shopee.co.id/search?keyword=Glad2Glow%20Centella%20Allantoin%20Soothing%20Gel%2055g'
+        },
+        {
+          id: 'cat-28',
+          name: 'Skintific Symwhite 377 Dark Spot Eraser Serum 20ml',
+          category: 'Skincare',
+          storeName: 'SKINTIFIC Official Shop',
+          storeType: 'OFFICIAL',
+          variant: '20ml • Niacinamide & Tranexamic Acid',
+          price: 139000,
+          badge: 'TERLARIS',
+          popularity: 95,
+          icon: 'skincare',
+          keyword: 'serum',
+          shopUrl: 'https://shopee.co.id/search?keyword=Skintific%20Symwhite%20377%20Serum%2020ml'
+        }
+      ];
+
+      // Menambahkan variasi halaman lanjutan agar etalase terasa kaya pilihan multi-halaman ("unlimited" feel)
+      const extraTemplates = [
+        { name: 'Indofood Kecap Manis & Saus Sambal Bundle', category: 'Dapur & Bumbu', storeName: 'Indofood Official Store', storeType: 'OFFICIAL', variant: 'Bundle Hemat • Bumbu Masak Harian', price: 26400, badge: 'TERLARIS', popularity: 84, icon: 'spice', keyword: 'bumbu dapur', shopUrl: 'https://shopee.co.id/search?keyword=Indofood%20Kecap%20Manis%20Saus%20Sambal' },
+        { name: 'Kikkoman Saus Teriyaki & Bulgogi Marinasi 250ml', category: 'Dapur & Bumbu', storeName: 'Asian Pantry Trusted', storeType: 'TRUSTED', variant: '250ml • Bumbu Marinasi Praktis', price: 28900, badge: 'TERMURAH', popularity: 82, icon: 'spice', keyword: 'saus teriyaki', shopUrl: 'https://shopee.co.id/search?keyword=Kikkoman%20Saus%20Teriyaki%20250ml' },
+        { name: 'Attack Jaz1 Deterjen Cair Pesona Segar 1.2L', category: 'Laundry', storeName: 'Kao Official Store', storeType: 'OFFICIAL', variant: '1.2 Liter • Bersih & Wangi', price: 27800, badge: 'TERMURAH', popularity: 83, icon: 'detergent', keyword: 'detergen cair', shopUrl: 'https://shopee.co.id/search?keyword=Attack%20Jaz1%20Deterjen%20Cair%201.2L' },
+        { name: 'So Klin Pewangi Pakaian Royale Gold Refill 800ml', category: 'Laundry', storeName: 'Wings Home Trusted', storeType: 'TRUSTED', variant: '800ml • Keharuman Mewah', price: 18500, badge: 'TERMURAH', popularity: 81, icon: 'detergent', keyword: 'pewangi pakaian', shopUrl: 'https://shopee.co.id/search?keyword=So%20Klin%20Pewangi%20Royale%20800ml' },
+        { name: 'Beras Pandan Wangi Super 5kg', category: 'Bahan Pokok', storeName: 'Lumbung Kita Trusted', storeType: 'TRUSTED', variant: '5kg • Butiran Utuh Pulen', price: 78000, badge: 'TERLARIS', popularity: 86, icon: 'rice', keyword: 'beras', shopUrl: 'https://shopee.co.id/search?keyword=Beras%20Pandan%20Wangi%205kg' },
+        { name: 'Sania Minyak Goreng Nabati Refill 2 Liter', category: 'Bahan Pokok', storeName: 'Wilmar Official Store', storeType: 'OFFICIAL', variant: '2 Liter • Jernih & Tahan Panas', price: 37900, badge: 'TERMURAH', popularity: 85, icon: 'cooking_oil', keyword: 'minyak goreng', shopUrl: 'https://shopee.co.id/search?keyword=Sania%20Minyak%20Goreng%202L' },
+        { name: 'Garnier Micellar Cleansing Water Pink 125ml', category: 'Skincare', storeName: 'Garnier Official Store', storeType: 'OFFICIAL', variant: '125ml • Hapus Makeup & Kotoran', price: 39000, badge: 'TERLARIS', popularity: 92, icon: 'skincare', keyword: 'micellar water', shopUrl: 'https://shopee.co.id/search?keyword=Garnier%20Micellar%20Water%20Pink%20125ml' },
+        { name: 'Cosrx Low pH Good Morning Gel Cleanser 150ml', category: 'Skincare', storeName: 'COSRX Official Shop', storeType: 'OFFICIAL', variant: '150ml • Tea Tree & BHA Lembut', price: 118000, badge: 'TERLARIS', popularity: 90, icon: 'skincare', keyword: 'gel cleanser', shopUrl: 'https://shopee.co.id/search?keyword=COSRX%20Low%20pH%20Good%20Morning%20Gel%20Cleanser' }
+      ];
+
+      return [...baseItems, ...extraTemplates].map((item) => ({
+        ...item,
+        prevPrice: item.price,
+        basePrice: item.price,
+        selected: false,
+        qty: 0
+      }));
+    }
+
+    const DEFAULT_SHOPEE_PRODUCTS = buildCatalogProducts();
+
+    let state = {
+      budget: 0,
+      inventory: structuredClone(DEFAULT_INVENTORY),
+      products: structuredClone(DEFAULT_SHOPEE_PRODUCTS),
+      stockFilter: 'ALL',
+      etalaseTab: 'ALL',
+      etalaseSort: 'TERLARIS',
+      etalaseStoreFilter: 'ALL',
+      etalasePage: 1,
+      shopeeBadgeFilter: 'ALL',
+      shopeeSearch: '',
+      autoSync: true,
+      lastRealtimeUpdate: '',
+      lastMarketSummary: 'Sinkronisasi harga realtime Shopee siap'
+    };
+
+    function getCurrentWibTimeString() {
+      try {
+        return new Date().toLocaleTimeString('id-ID', {
+          timeZone: 'Asia/Jakarta',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }) + ' WIB';
+      } catch (_err) {
+        return new Date().toLocaleTimeString('id-ID') + ' WIB';
+      }
+    }
+
+    function formatRupiah(amount) {
+      const num = Math.round(Number(amount) || 0);
+      return 'Rp' + num.toLocaleString('id-ID');
+    }
+
+    function getStockStatus(qty, minQty) {
+      const q = Math.max(0, Number(qty) || 0);
+      const m = Math.max(0, Number(minQty) || 0);
+      if (q <= m) {
+        return {
+          code: 'MAU_ABIS',
+          label: 'Mau Abis!',
+          badgeClass: 'bg-rose-100 text-rose-700',
+          barClass: 'bg-rose-500'
+        };
+      }
+      if (q <= m + 1) {
+        return {
+          code: 'MENIPIS',
+          label: 'Menipis',
+          badgeClass: 'bg-skywash-100 text-ocean-600',
+          barClass: 'bg-ocean-400'
+        };
+      }
+      return {
+        code: 'AMAN',
+        label: 'Aman',
+        badgeClass: 'bg-lagoon-100 text-teal-800',
+        barClass: 'bg-teal-500'
+      };
+    }
+
+    function calculateBudgetSummary() {
+      const budget = Math.max(0, Number(state.budget) || 0);
+      const selected = state.products.filter((p) => p.selected);
+      const totalCart = selected.reduce((sum, p) => {
+        const q = Math.max(0, Number(p.qty) || 0);
+        const price = Math.max(0, Number(p.price) || 0);
+        return sum + q * price;
+      }, 0);
+      const totalQty = selected.reduce((sum, p) => sum + Math.max(0, Number(p.qty) || 0), 0);
+      const diff = budget - totalCart;
+      const isOverBudget = totalCart > budget;
+      const rawUsage = budget > 0 ? Math.round((totalCart / budget) * 100) : 0;
+      const usagePercent = Math.min(100, Math.max(0, rawUsage));
+
+      return {
+        budget,
+        selectedProductCount: selected.length,
+        totalCart,
+        totalQty,
+        diff,
+        isOverBudget,
+        usagePercent
+      };
+    }
+
+    function showToast(message, type = 'info', target = 'auto') {
+      const palette = {
+        success: 'bg-cotton-50 border-cotton-200 text-cotton-500',
+        warning: 'bg-skywash-100 border-skywash-300 text-ocean-600',
+        info: 'bg-skywash-50 border-skywash-200 text-slate-800'
+      };
+      const cls = `mt-4 px-4 py-3 rounded-2xl border text-xs sm:text-sm font-semibold flex items-center justify-between gap-3 transition-all duration-200 ${palette[type] || palette.info}`;
+
+      const currentProfile = profilesStore.find((p) => p.id === activeProfileId);
+      const isPortalActive = target === 'portal' || (target === 'auto' && (isLoggedOutToPortal || !currentProfile));
+
+      if (isPortalActive) {
+        const pBanner = document.getElementById('portalToastBanner');
+        const pMsg = document.getElementById('portalToastMessage');
+        if (pBanner && pMsg) {
+          pBanner.className = cls;
+          pMsg.textContent = message;
+          pBanner.classList.remove('hidden');
+        }
+        return;
+      }
+
+      const banner = document.getElementById('toastBanner');
+      const msgEl = document.getElementById('toastMessage');
+      if (!banner || !msgEl) return;
+
+      banner.className = cls;
+      msgEl.textContent = message;
+      banner.classList.remove('hidden');
+    }
+
+    function loadState() {
+      try {
+        const rawProfiles = localStorage.getItem(PROFILES_STORAGE_KEY);
+        if (rawProfiles) {
+          const parsedProfiles = JSON.parse(rawProfiles);
+          if (Array.isArray(parsedProfiles)) {
+            profilesStore = parsedProfiles;
+          }
+        }
+
+        const savedActiveId = localStorage.getItem(ACTIVE_PROFILE_KEY) || '';
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            state = {
+              ...state,
+              ...parsed,
+              inventory: Array.isArray(parsed.inventory) && parsed.inventory.length > 0
+                ? parsed.inventory
+                : structuredClone(DEFAULT_INVENTORY),
+              products: Array.isArray(parsed.products) && parsed.products.length > 0
+                ? parsed.products
+                : structuredClone(DEFAULT_SHOPEE_PRODUCTS)
+            };
+          }
+        }
+
+        if (savedActiveId && profilesStore.some((p) => p.id === savedActiveId)) {
+          activeProfileId = savedActiveId;
+          const foundProfile = profilesStore.find((p) => p.id === activeProfileId);
+          if (foundProfile && foundProfile.data) {
+            state = {
+              ...state,
+              ...foundProfile.data,
+              inventory: Array.isArray(foundProfile.data.inventory)
+                ? foundProfile.data.inventory
+                : structuredClone(DEFAULT_INVENTORY),
+              products: Array.isArray(foundProfile.data.products) && foundProfile.data.products.length > 0
+                ? foundProfile.data.products
+                : structuredClone(DEFAULT_SHOPEE_PRODUCTS)
+            };
+          }
+          isLoggedOutToPortal = false;
+        } else {
+          activeProfileId = '';
+          isLoggedOutToPortal = true;
+        }
+      } catch (err) {
+        console.warn('Gagal memuat state dari localStorage:', err);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        if (activeProfileId) {
+          const idx = profilesStore.findIndex((p) => p.id === activeProfileId);
+          if (idx !== -1) {
+            profilesStore[idx] = {
+              ...profilesStore[idx],
+              updatedAt: getCurrentWibTimeString(),
+              data: {
+                budget: state.budget,
+                inventory: state.inventory,
+                products: state.products,
+                stockFilter: state.stockFilter,
+                etalaseTab: state.etalaseTab,
+                etalaseSort: state.etalaseSort,
+                etalaseStoreFilter: state.etalaseStoreFilter,
+                etalasePage: state.etalasePage,
+                shopeeBadgeFilter: state.shopeeBadgeFilter,
+                shopeeSearch: state.shopeeSearch,
+                autoSync: state.autoSync,
+                lastRealtimeUpdate: state.lastRealtimeUpdate,
+                lastMarketSummary: state.lastMarketSummary
+              }
+            };
+            localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profilesStore));
+          }
+          localStorage.setItem(ACTIVE_PROFILE_KEY, activeProfileId);
+        }
+      } catch (err) {
+        console.warn('Gagal menyimpan state ke localStorage:', err);
+      }
+    }
+
+    function selectProfile(profileId) {
+      const target = profilesStore.find((p) => p.id === profileId);
+      if (!target) return;
+
+      const usernameInput = document.getElementById(`loginUsername_${profileId}`);
+      const pinInput = document.getElementById(`loginPin_${profileId}`);
+      const enteredUsername = String(usernameInput?.value || '').trim().toLowerCase();
+      const enteredPin = String(pinInput?.value || '').trim();
+
+      if (target.username) {
+        if (!enteredUsername || enteredUsername !== String(target.username).toLowerCase()) {
+          showToast('Username profil belum sesuai.', 'warning', 'portal');
+          return;
+        }
+      }
+
+      if (target.pin) {
+        if (!/^\d{4}$/.test(enteredPin) || enteredPin !== String(target.pin)) {
+          showToast('PIN 4 angka belum sesuai.', 'warning', 'portal');
+          return;
+        }
+      }
+
+      activeProfileId = target.id;
+      isLoggedOutToPortal = false;
+      activePinPromptProfileId = '';
+      localStorage.setItem(ACTIVE_PROFILE_KEY, activeProfileId);
+
+      const savedData = target.data || {};
+      state = {
+        budget: Number(savedData.budget) || 0,
+        inventory: Array.isArray(savedData.inventory) ? savedData.inventory : structuredClone(DEFAULT_INVENTORY),
+        products: Array.isArray(savedData.products) && savedData.products.length > 0
+          ? savedData.products
+          : structuredClone(DEFAULT_SHOPEE_PRODUCTS),
+        stockFilter: savedData.stockFilter || 'ALL',
+        etalaseTab: savedData.etalaseTab || 'ALL',
+        etalaseSort: savedData.etalaseSort || 'TERLARIS',
+        etalaseStoreFilter: savedData.etalaseStoreFilter || 'ALL',
+        etalasePage: Number(savedData.etalasePage) || 1,
+        shopeeBadgeFilter: savedData.shopeeBadgeFilter || 'ALL',
+        shopeeSearch: savedData.shopeeSearch || '',
+        autoSync: savedData.autoSync !== undefined ? Boolean(savedData.autoSync) : true,
+        lastRealtimeUpdate: savedData.lastRealtimeUpdate || getCurrentWibTimeString(),
+        lastMarketSummary: savedData.lastMarketSummary || 'Sinkronisasi harga realtime Shopee aktif'
+      };
+
+      saveState();
+      renderAll();
+      configureAutoSyncTimer();
+      showToast(`Masuk ke profil "${target.name}".`, 'success', 'dashboard');
+    }
+
+    function createProfileAndEnter(name, username = '', pin = '', gender = 'female') {
+      const cleanName = String(name || '').trim();
+      const cleanUsername = String(username || '').trim();
+      const cleanPin = String(pin || '').trim();
+      const cleanGender = gender === 'male' ? 'male' : 'female';
+
+      if (!cleanName) {
+        showToast('Masukkan nama profil terlebih dahulu.', 'warning', 'portal');
+        return;
+      }
+      if (!cleanUsername) {
+        showToast('Masukkan username untuk profil baru.', 'warning', 'portal');
+        return;
+      }
+      if (!/^\d{4}$/.test(cleanPin)) {
+        showToast('Masukkan PIN 4 digit angka.', 'warning', 'portal');
+        return;
+      }
+
+      const freshState = {
+        budget: 0,
+        inventory: structuredClone(DEFAULT_INVENTORY),
+        products: structuredClone(DEFAULT_SHOPEE_PRODUCTS),
+        stockFilter: 'ALL',
+        etalaseTab: 'ALL',
+        etalaseSort: 'TERLARIS',
+        etalaseStoreFilter: 'ALL',
+        etalasePage: 1,
+        shopeeBadgeFilter: 'ALL',
+        shopeeSearch: '',
+        autoSync: true,
+        lastRealtimeUpdate: getCurrentWibTimeString(),
+        lastMarketSummary: 'Profil baru siap digunakan'
+      };
+
+      const newProfile = {
+        id: 'prof-' + Date.now(),
+        name: cleanName,
+        username: cleanUsername,
+        pin: cleanPin,
+        gender: cleanGender,
+        updatedAt: getCurrentWibTimeString(),
+        data: freshState
+      };
+
+      profilesStore.unshift(newProfile);
+      activeProfileId = newProfile.id;
+      isLoggedOutToPortal = false;
+      activePinPromptProfileId = '';
+      state = { ...freshState };
+
+      localStorage.setItem(PROFILES_STORAGE_KEY, JSON.stringify(profilesStore));
+      localStorage.setItem(ACTIVE_PROFILE_KEY, activeProfileId);
+      saveState();
+      renderAll();
+      configureAutoSyncTimer();
+      showToast(`Profil "${cleanName}" berhasil dibuat.`, 'success', 'dashboard');
+    }
+
+    function getGenderIcon(gender) {
+      return gender === 'male' ? '👦' : '👧';
+    }
+
+    function openPinPromptForProfile(profileId) {
+      activePinPromptProfileId = profileId;
+      renderProfilePortal();
+      setTimeout(() => {
+        document.getElementById(`loginUsername_${profileId}`)?.focus();
+      }, 0);
+    }
+
+    function openCreateProfilePanel() {
+      const panel = document.getElementById('createProfilePanel');
+      if (panel) {
+        panel.classList.remove('hidden');
+      }
+      setTimeout(() => {
+        document.getElementById('newProfileNameInput')?.focus();
+      }, 0);
+    }
+
+    function closeCreateProfilePanel() {
+      const panel = document.getElementById('createProfilePanel');
+      if (panel) {
+        panel.classList.add('hidden');
+      }
+    }
+
+    function renderProfilePortal() {
+      const portalEl = document.getElementById('profilePortalView');
+      const dashboardEl = document.getElementById('dashboardAppShell');
+      const gridEl = document.getElementById('profileListGrid');
+      const guideEl = document.getElementById('newUserGuideBox');
+      const badgeEl = document.getElementById('activeProfileBadge');
+
+      const currentProfile = profilesStore.find((p) => p.id === activeProfileId);
+      const shouldShowPortal = isLoggedOutToPortal || !currentProfile;
+
+      if (badgeEl) {
+        badgeEl.textContent = currentProfile && !isLoggedOutToPortal
+          ? `${getGenderIcon(currentProfile.gender)} ${currentProfile.name}`
+          : 'Pilih Profil';
+      }
+
+      if (guideEl) {
+        guideEl.classList.toggle('hidden', profilesStore.length > 0);
+      }
+
+      if (portalEl) {
+        portalEl.classList.toggle('hidden', !shouldShowPortal);
+      }
+      if (dashboardEl) {
+        dashboardEl.classList.toggle('hidden', shouldShowPortal);
+      }
+
+      if (!shouldShowPortal || !gridEl) return;
+
+      const addCardHtml = `
+        <button
+          type="button"
+          onclick="openCreateProfilePanel()"
+          class="polka-accent rounded-3xl border-2 border-dashed border-cotton-300 bg-cotton-50/75 hover:bg-cotton-100/75 p-5 flex flex-col items-center justify-center text-center min-h-[210px] transition cursor-pointer"
+        >
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-skywash-100 to-cotton-100 border border-cotton-200 flex items-center justify-center text-2xl font-extrabold text-cotton-500 shadow-sm">+</div>
+          <p class="text-sm font-extrabold text-slate-900 mt-3">Tambah User</p>
+          <p class="text-xs text-slate-500 mt-0.5">Buat profil baru</p>
+        </button>
+      `;
+
+      if (profilesStore.length === 0) {
+        gridEl.innerHTML = addCardHtml;
+        return;
+      }
+
+      const profileCardsHtml = profilesStore.map((prof) => {
+        const pBudget = Number(prof.data?.budget) || 0;
+        const pItems = Array.isArray(prof.data?.inventory) ? prof.data.inventory.length : DEFAULT_INVENTORY.length;
+        const genderIcon = getGenderIcon(prof.gender);
+        const genderLabel = prof.gender === 'male' ? 'Cowok' : 'Cewek';
+        const isPinOpen = prof.id === activePinPromptProfileId;
+
+        return `
+          <div class="smooth-panel rounded-3xl border-2 border-skywash-200 bg-white p-5 shadow-card flex flex-col items-center text-center justify-between min-h-[210px]">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-skywash-100 to-cotton-100 border border-cotton-200 flex items-center justify-center text-2xl shadow-sm">
+              ${genderIcon}
+            </div>
+
+            <div class="mt-2.5">
+              <h3 class="text-base font-extrabold text-slate-950 truncate max-w-[190px]">${escapeHtml(prof.name)}</h3>
+              <p class="text-xs text-slate-500 mt-0.5">@${escapeHtml(prof.username || 'user')} • ${genderLabel}</p>
+              <p class="text-[11px] font-semibold text-ocean-600 mt-0.5">${pItems} barang • ${formatRupiah(pBudget)}</p>
+            </div>
+
+            <div class="mt-3.5 w-full">
+              ${isPinOpen ? `
+                <div class="space-y-2 text-left">
+                  <input
+                    type="text"
+                    id="loginUsername_${prof.id}"
+                    placeholder="Username"
+                    class="w-full px-3 py-1.5 rounded-xl border border-skywash-200 bg-skywash-50/70 text-xs font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+                  />
+                  <div class="flex items-center gap-1.5">
+                    <input
+                      type="password"
+                      id="loginPin_${prof.id}"
+                      inputmode="numeric"
+                      maxlength="4"
+                      placeholder="PIN 4 angka"
+                      class="w-full px-3 py-1.5 rounded-xl border border-skywash-200 bg-skywash-50/70 text-xs font-semibold text-slate-900 focus:outline-none focus:border-cotton-400 transition"
+                    />
+                    <button
+                      type="button"
+                      onclick="selectProfile('${prof.id}')"
+                      class="shrink-0 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-gradient-to-r from-ocean-500 to-cotton-400 text-white transition cursor-pointer"
+                    >
+                      Masuk
+                    </button>
+                  </div>
+                </div>
+              ` : `
+                <button
+                  type="button"
+                  onclick="openPinPromptForProfile('${prof.id}')"
+                  class="w-full px-3.5 py-2 rounded-2xl border border-skywash-200 bg-skywash-50/70 hover:bg-cotton-50 text-xs font-extrabold text-slate-800 transition cursor-pointer"
+                >
+                  🔒 Masukkan PIN
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      gridEl.innerHTML = profileCardsHtml + addCardHtml;
+    }
+
+    // Menghasilkan item katalog lanjutan secara dinamis untuk halaman besar agar navigasi halaman etalase terus hidup
+    function getEtalaseCatalogForView() {
+      const baseFiltered = state.products.filter((prod) => {
+        const matchesCat = state.etalaseTab === 'ALL' || prod.category === state.etalaseTab;
+        const matchesStore = state.etalaseStoreFilter === 'ALL' || prod.storeType === state.etalaseStoreFilter;
+        return matchesCat && matchesStore;
+      });
+
+      const poolSource = baseFiltered.length > 0 ? baseFiltered : state.products;
+      const expanded = [];
+      const targetCount = Math.max(poolSource.length, 24);
+
+      for (let i = 0; i < targetCount; i += 1) {
+        const src = poolSource[i % poolSource.length];
+        const cycle = Math.floor(i / poolSource.length);
+        if (cycle === 0) {
+          expanded.push({ ...src, virtualPageTag: '' });
+        } else {
+          const factor = cycle === 1 ? 0.94 : 1.07;
+          const adjustedPrice = Math.max(5000, Math.round((Number(src.price) * factor) / 500) * 500);
+          expanded.push({
+            ...src,
+            price: adjustedPrice,
+            popularity: Math.max(50, (Number(src.popularity) || 85) - cycle * 4),
+            variant: `${src.variant} • Batch #${cycle + 1}`
+          });
+        }
+      }
+
+      if (state.etalaseSort === 'TERMURAH') {
+        expanded.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
+      } else if (state.etalaseSort === 'TERMAHAL') {
+        expanded.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+      } else {
+        expanded.sort((a, b) => (Number(b.popularity) || 0) - (Number(a.popularity) || 0));
+      }
+
+      return expanded;
+    }
+
+    function goToEtalasePage(pageNum) {
+      const catalog = getEtalaseCatalogForView();
+      const pageSize = 4;
+      const totalPages = Math.max(1, Math.ceil(catalog.length / pageSize));
+      const clamped = Math.min(totalPages, Math.max(1, Number(pageNum) || 1));
+      state.etalasePage = clamped;
+      saveState();
+      renderEtalase();
+    }
+
+    function runRealtimePriceTick(notifyUser = false) {
+      try {
+        let changedCount = 0;
+        let netDirection = 0;
+
+        state.products = state.products.map((prod) => {
+          const prevPrice = Math.max(1000, Number(prod.price) || Number(prod.basePrice) || 10000);
+          const basePrice = Math.max(1000, Number(prod.basePrice) || prevPrice);
+          const deltaPct = (Math.random() * 0.06) - 0.03;
+          const rawNext = Math.round((prevPrice * (1 + deltaPct)) / 50) * 50;
+          const minAllowed = Math.max(1000, Math.round((basePrice * 0.85) / 50) * 50);
+          const maxAllowed = Math.round((basePrice * 1.15) / 50) * 50;
+          const nextPrice = Math.min(maxAllowed, Math.max(minAllowed, rawNext));
+
+          if (nextPrice !== prevPrice) {
+            changedCount += 1;
+            netDirection += nextPrice > prevPrice ? 1 : -1;
+          }
+
+          return {
+            ...prod,
+            prevPrice,
+            price: nextPrice
+          };
+        });
+
+        state.lastRealtimeUpdate = getCurrentWibTimeString();
+        if (changedCount === 0) {
+          state.lastMarketSummary = 'Harga stabil di pasar Shopee';
+        } else if (netDirection > 0) {
+          state.lastMarketSummary = `${changedCount} harga Shopee diperbarui (cenderung naik)`;
+        } else if (netDirection < 0) {
+          state.lastMarketSummary = `${changedCount} harga Shopee diperbarui (ada promo turun)`;
+        } else {
+          state.lastMarketSummary = `${changedCount} harga Shopee diperbarui realtime`;
+        }
+
+        saveState();
+        renderRealtimeHeader();
+        renderMetrics();
+        renderShopeeProducts();
+        renderEtalase();
+
+        if (notifyUser) {
+          showToast(`Harga realtime Shopee diperbarui (${state.lastRealtimeUpdate}).`, 'success');
+        }
+      } catch (err) {
+        console.warn('Gagal memperbarui harga realtime:', err);
+      }
+    }
+
+    function configureAutoSyncTimer() {
+      if (autoSyncTimerId !== null) {
+        clearInterval(autoSyncTimerId);
+        autoSyncTimerId = null;
+      }
+
+      if (state.autoSync) {
+        autoSyncTimerId = setInterval(() => {
+          runRealtimePriceTick(false);
+        }, AUTO_SYNC_INTERVAL_MS);
+      }
+    }
+
+    function renderRealtimeHeader() {
+      const timeEl = document.getElementById('realtimeTimestamp');
+      const summaryEl = document.getElementById('realtimeMarketSummary');
+      const autoBtn = document.getElementById('toggleAutoSyncBtn');
+
+      if (!state.lastRealtimeUpdate) {
+        state.lastRealtimeUpdate = getCurrentWibTimeString();
+      }
+
+      if (timeEl) {
+        timeEl.textContent = state.lastRealtimeUpdate;
+      }
+      if (summaryEl) {
+        summaryEl.textContent = state.lastMarketSummary || 'Sinkronisasi harga realtime Shopee aktif';
+      }
+      if (autoBtn) {
+        autoBtn.textContent = state.autoSync ? 'Auto-Sync: ON (15d)' : 'Auto-Sync: OFF';
+        autoBtn.className = state.autoSync
+          ? 'no-print toggle-glass toggle-glass-active px-3.5 py-2 rounded-2xl text-xs font-extrabold transition cursor-pointer'
+          : 'no-print toggle-glass px-3.5 py-2 rounded-2xl text-xs font-extrabold opacity-80 transition cursor-pointer';
+      }
+    }
+
+    function renderMetrics() {
+      const totalItems = state.inventory.length;
+      const urgentItems = state.inventory.filter((item) => getStockStatus(item.qty, item.minQty).code === 'MAU_ABIS').length;
+      const summary = calculateBudgetSummary();
+
+      const totalItemsEl = document.getElementById('metricTotalItems');
+      const urgentItemsEl = document.getElementById('metricUrgentItems');
+      const budgetNoteEl = document.getElementById('metricBudgetNote');
+      const cartTotalEl = document.getElementById('metricCartTotal');
+      const cartCountEl = document.getElementById('metricCartCount');
+      const remainingValEl = document.getElementById('metricRemainingValue');
+      const remainingNoteEl = document.getElementById('metricRemainingNote');
+      const progressBarEl = document.getElementById('budgetProgressBar');
+      const progressPercentEl = document.getElementById('budgetUsagePercent');
+
+      if (totalItemsEl) totalItemsEl.textContent = `${totalItems} item`;
+      if (urgentItemsEl) urgentItemsEl.textContent = `${urgentItems} barang mau abis`;
+      if (budgetNoteEl) budgetNoteEl.textContent = `Terpakai ${summary.usagePercent}% dari anggaran`;
+      if (cartTotalEl) cartTotalEl.textContent = formatRupiah(summary.totalCart);
+      if (cartCountEl) cartCountEl.textContent = `${summary.selectedProductCount} produk • ${summary.totalQty} pcs`;
+
+      if (remainingValEl && remainingNoteEl) {
+        if (summary.isOverBudget) {
+          remainingValEl.textContent = '-' + formatRupiah(Math.abs(summary.diff));
+          remainingValEl.className = 'text-xl sm:text-2xl font-extrabold text-rose-600 mt-1';
+          remainingNoteEl.textContent = 'Melebihi budget! Kurangi jumlah atau tambah budget.';
+          remainingNoteEl.className = 'text-xs text-rose-600 font-semibold mt-1';
+        } else {
+          remainingValEl.textContent = formatRupiah(summary.diff);
+          remainingValEl.className = 'text-xl sm:text-2xl font-extrabold text-teal-700 mt-1';
+          remainingNoteEl.textContent = 'Aman dalam batas budget';
+          remainingNoteEl.className = 'text-xs text-teal-700 font-semibold mt-1';
+        }
+      }
+
+      if (progressBarEl) {
+        progressBarEl.style.width = `${summary.usagePercent}%`;
+        progressBarEl.className = summary.isOverBudget
+          ? 'h-full bg-rose-500 rounded-full transition-all duration-300'
+          : 'h-full bg-gradient-to-r from-ocean-400 to-cotton-400 rounded-full transition-all duration-300';
+      }
+      if (progressPercentEl) {
+        progressPercentEl.textContent = `${summary.usagePercent}%`;
+      }
+    }
+
+    function renderInventory() {
+      const listEl = document.getElementById('inventoryList');
+      if (!listEl) return;
+
+      const filtered = state.inventory.filter((item) => {
+        const status = getStockStatus(item.qty, item.minQty);
+        if (state.stockFilter === 'MAU_ABIS') return status.code === 'MAU_ABIS';
+        if (state.stockFilter === 'AMAN') return status.code !== 'MAU_ABIS';
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="text-center py-8 px-4 rounded-2xl bg-skywash-50/70 border border-dashed border-skywash-200">
+            <p class="text-xs sm:text-sm font-semibold text-slate-700">Tidak ada barang pada filter ini.</p>
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map((item) => {
+        const qty = Math.max(0, Number(item.qty) || 0);
+        const minQty = Math.max(0, Number(item.minQty) || 0);
+        const targetQty = Math.max(minQty + 2, Number(item.targetQty) || (minQty + 2));
+        const status = getStockStatus(qty, minQty);
+        const unit = item.unit || 'pcs';
+        const barPct = targetQty > 0 ? Math.min(100, Math.round((qty / targetQty) * 100)) : 0;
+        const restockGap = Math.max(1, targetQty - qty);
+
+        return `
+          <div class="smooth-panel rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-xl overflow-hidden border border-slate-200/70 shrink-0 bg-skywash-50">
+                  ${renderProductPhotoImg(item.icon, item.name, 'w-full h-full object-cover')}
+                </div>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-xs sm:text-sm font-bold text-slate-900">${escapeHtml(item.name)}</h3>
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${status.badgeClass}">${status.label}</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5">
+                    ${escapeHtml(item.category)} • Batas minimum: <strong>${minQty} ${escapeHtml(unit)}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div class="text-right shrink-0">
+                <div class="text-base sm:text-lg font-extrabold text-slate-950">${qty} <span class="text-xs font-semibold text-slate-500">${escapeHtml(unit)}</span></div>
+                <button
+                  type="button"
+                  onclick="deleteInventoryItem('${item.id}')"
+                  class="no-print text-[11px] font-bold text-rose-600 hover:underline mt-0.5 cursor-pointer"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-3 w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full ${status.barClass} rounded-full transition-all duration-300" style="width: ${barPct}%"></div>
+            </div>
+
+            <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+              <div class="no-print flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  onclick="adjustQty('${item.id}', -1)"
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-800 transition cursor-pointer"
+                >
+                  -1 ${escapeHtml(unit)}
+                </button>
+                <button
+                  type="button"
+                  onclick="adjustQty('${item.id}', 1)"
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-skywash-100 hover:bg-skywash-200 text-ocean-600 transition cursor-pointer"
+                >
+                  +1 ${escapeHtml(unit)}
+                </button>
+                <button
+                  type="button"
+                  onclick="adjustQty('${item.id}', ${restockGap})"
+                  class="px-2.5 py-1.5 rounded-xl text-xs font-bold bg-lagoon-100 hover:bg-lagoon-200 text-teal-800 transition cursor-pointer"
+                >
+                  Restock (+${restockGap} ${escapeHtml(unit)})
+                </button>
+              </div>
+
+              <label class="no-print flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                <span>Jumlah:</span>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value="${qty}"
+                  onchange="setExactQty('${item.id}', this.value)"
+                  class="w-20 px-2.5 py-1 rounded-xl border border-slate-200 bg-skywash-50/60 text-xs font-bold text-slate-950 focus:outline-none focus:border-ocean-400 transition"
+                />
+              </label>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderShopeeProducts() {
+      const container = document.getElementById('shopeeProductList');
+      if (!container) return;
+
+      const query = (state.shopeeSearch || '').trim().toLowerCase();
+      const filtered = state.products.filter((prod) => {
+        const matchesBadge = state.shopeeBadgeFilter === 'ALL' || prod.badge === state.shopeeBadgeFilter;
+        const matchesSearch = !query
+          || prod.name.toLowerCase().includes(query)
+          || prod.variant.toLowerCase().includes(query)
+          || prod.category.toLowerCase().includes(query)
+          || (prod.storeName || '').toLowerCase().includes(query);
+        return matchesBadge && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 px-4 rounded-2xl bg-skywash-50/60 border border-dashed border-skywash-200">
+            <p class="text-xs sm:text-sm font-semibold text-slate-700">Produk Shopee tidak ditemukan.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map((prod) => {
+        const price = Math.max(0, Number(prod.price) || 0);
+        const prevPrice = Math.max(0, Number(prod.prevPrice) || price);
+        const qty = Math.max(0, Number(prod.qty) || 0);
+        const badgeClass = prod.badge === 'TERMURAH'
+          ? 'bg-lagoon-100 text-teal-800'
+          : 'bg-skywash-100 text-ocean-600';
+        const storeBadge = prod.storeType === 'OFFICIAL'
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-gold-100 text-gold-600">🏅 ${escapeHtml(prod.storeName || 'Official Store')}</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cotton-100 text-cotton-500">🛡️ ${escapeHtml(prod.storeName || 'Trusted Store')}</span>`;
+
+        let trendBadge = '';
+        if (price > prevPrice) {
+          trendBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">Naik dikit</span>';
+        } else if (price < prevPrice) {
+          trendBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-lagoon-100 text-teal-800">Turun harga</span>';
+        }
+
+        return `
+          <div class="smooth-panel rounded-2xl border ${prod.selected ? 'border-ocean-400 bg-skywash-50/40' : 'border-slate-200/80 bg-white'} p-3.5 shadow-card transition">
+            <div class="flex items-start gap-3">
+              <input
+                type="checkbox"
+                ${prod.selected ? 'checked' : ''}
+                onchange="toggleProductSelection('${prod.id}')"
+                class="no-print mt-1 w-4 h-4 accent-ocean-500 rounded cursor-pointer shrink-0"
+              />
+              <div
+                onclick="openShopeeStoreLink('${escapeHtml(prod.shopUrl)}')"
+                class="w-14 h-14 rounded-xl overflow-hidden border border-slate-200/70 shrink-0 cursor-pointer bg-skywash-50"
+              >
+                ${renderProductPhotoImg(prod.icon, prod.name, 'w-full h-full object-cover')}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${escapeHtml(prod.badge)}</span>
+                  ${storeBadge}
+                  ${trendBadge}
+                </div>
+                <a
+                  href="${escapeHtml(prod.shopUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-xs sm:text-sm font-bold text-slate-900 hover:text-ocean-500 transition mt-1 block"
+                >
+                  ${escapeHtml(prod.name)}
+                </a>
+                <p class="text-[11px] text-slate-500 mt-0.5">${escapeHtml(prod.variant)}</p>
+              </div>
+            </div>
+
+            <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div>
+                <div class="text-xs sm:text-sm font-extrabold text-ocean-600">${formatRupiah(price)}</div>
+                <div class="text-[11px] text-slate-500">Subtotal: <strong>${formatRupiah(price * qty)}</strong></div>
+              </div>
+
+              <div class="no-print flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onclick="updateProductQty('${prod.id}', -1)"
+                  class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 font-bold text-xs text-slate-800 transition cursor-pointer"
+                >
+                  -
+                </button>
+                <span class="w-7 text-center text-xs font-extrabold text-slate-950">${qty}</span>
+                <button
+                  type="button"
+                  onclick="updateProductQty('${prod.id}', 1)"
+                  class="w-7 h-7 rounded-lg bg-ocean-500 hover:bg-ocean-600 font-bold text-xs text-white transition cursor-pointer"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function adjustQty(id, delta) {
+      const item = state.inventory.find((i) => i.id === id);
+      if (!item) return;
+      item.qty = Math.max(0, (Number(item.qty) || 0) + Number(delta));
+      saveState();
+      renderAll();
+    }
+
+    function setExactQty(id, rawVal) {
+      const item = state.inventory.find((i) => i.id === id);
+      if (!item) return;
+      const parsed = Math.max(0, Math.floor(Number(rawVal) || 0));
+      item.qty = parsed;
+      saveState();
+      renderAll();
+    }
+
+    function deleteInventoryItem(id) {
+      state.inventory = state.inventory.filter((i) => i.id !== id);
+      saveState();
+      renderAll();
+      showToast('Barang dihapus dari daftar stok bulanan.', 'info');
+    }
+
+    function toggleProductSelection(id) {
+      const prod = state.products.find((p) => p.id === id);
+      if (!prod) return;
+      prod.selected = !prod.selected;
+      if (prod.selected && (Number(prod.qty) || 0) <= 0) {
+        prod.qty = 1;
+      } else if (!prod.selected) {
+        prod.qty = 0;
+      }
+      saveState();
+      renderMetrics();
+      renderShopeeProducts();
+      renderEtalase();
+    }
+
+    function autoSelectUrgentProducts() {
+      const urgentItems = state.inventory.filter((item) => getStockStatus(item.qty, item.minQty).code === 'MAU_ABIS');
+      if (urgentItems.length === 0) {
+        showToast('Tidak ada barang berstatus "Mau Abis!" saat ini.', 'info');
+        return;
+      }
+
+      let matchedCount = 0;
+      urgentItems.forEach((urg) => {
+        const kw = (urg.linkedKeyword || urg.name || '').toLowerCase();
+        const found = state.products.find((p) => {
+          const pKw = (p.keyword || '').toLowerCase();
+          return p.name.toLowerCase().includes(kw) || kw.includes(pKw) || p.category === urg.category;
+        });
+        if (found) {
+          found.selected = true;
+          const targetQty = Math.max(1, Number(urg.targetQty) || (Number(urg.minQty) || 0) + 2);
+          const needed = Math.max(1, targetQty - (Number(found.qty) || 0));
+          found.qty = Math.max(Number(found.qty) || 0, needed);
+          matchedCount += 1;
+        }
+      });
+
+      saveState();
+      renderMetrics();
+      renderShopeeProducts();
+      renderEtalase();
+
+      if (matchedCount > 0) {
+        showToast(`${matchedCount} rekomendasi produk Shopee otomatis dipilih untuk barang "Mau Abis!".`, 'success');
+      } else {
+        showToast('Barang "Mau Abis!" terdeteksi, namun belum ada produk Shopee yang cocok.', 'warning');
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderProductPhotoImg(iconType, altText, imgClass = 'w-full h-full object-cover') {
+      const palettes = {
+        dish_soap: { bg1: '#E0F4FF', bg2: '#FFE4F2', accent: '#0284C7', label: 'DISH SOAP' },
+        spice: { bg1: '#FFFBEB', bg2: '#FFE4F1', accent: '#D97706', label: 'SPICES & SAUCE' },
+        detergent: { bg1: '#E0F7FA', bg2: '#FFE6F3', accent: '#0D9488', label: 'LAUNDRY' },
+        cooking_oil: { bg1: '#FFF0F7', bg2: '#E0F2FE', accent: '#DB2777', label: 'COOKING OIL' },
+        tissue: { bg1: '#F0F9FF', bg2: '#FCE7F3', accent: '#2563EB', label: 'FACIAL TISSUE' },
+        rice: { bg1: '#ECFDF5', bg2: '#E0F2FE', accent: '#059669', label: 'STAPLES' },
+        body_wash: { bg1: '#EFF6FF', bg2: '#FFE4F1', accent: '#1D4ED8', label: 'BODY WASH' },
+        toothpaste: { bg1: '#E0F2FE', bg2: '#FFF0F7', accent: '#0369A1', label: 'TOOTHPASTE' },
+        skincare: { bg1: '#FFF0F7', bg2: '#E0F4FF', accent: '#D9438B', label: 'SKINCARE' }
+      };
+      const pal = palettes[iconType] || palettes.dish_soap;
+      const safeLabel = escapeHtml(pal.label);
+      const svgMarkup = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${pal.bg1}"/><stop offset="100%" stop-color="${pal.bg2}"/></linearGradient></defs><rect width="240" height="160" rx="16" fill="url(#g)"/><circle cx="34" cy="28" r="5" fill="#FF94C7" opacity="0.6"/><circle cx="206" cy="132" r="6" fill="#3CA6FF" opacity="0.5"/><rect x="82" y="28" width="76" height="84" rx="14" fill="#FFFFFF" stroke="${pal.accent}" stroke-width="3"/><rect x="98" y="16" width="44" height="14" rx="6" fill="${pal.accent}"/><circle cx="120" cy="70" r="18" fill="${pal.bg2}"/><text x="120" y="138" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="800" fill="${pal.accent}">${safeLabel}</text></svg>`;
+      const src = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svgMarkup);
+      const fallbackSrc = 'https://placehold.co/240x160/FFE3F1/196CE0?text=' + encodeURIComponent(pal.label);
+      return `<img src="${src}" alt="${escapeHtml(altText || pal.label)}" class="${imgClass}" onerror="this.onerror=null;this.src='${fallbackSrc}';" />`;
+    }
+
+    function openShopeeStoreLink(url) {
+      if (!url) return;
+      try {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } catch (_err) {
+        window.location.href = url;
+      }
+    }
+
+    function updateProductQty(productId, delta) {
+      const prod = state.products.find((p) => p.id === productId);
+      if (!prod) return;
+      const nextQty = Math.max(0, (Number(prod.qty) || 0) + Number(delta));
+      prod.qty = nextQty;
+      prod.selected = nextQty > 0;
+      saveState();
+      renderMetrics();
+      renderShopeeProducts();
+      renderEtalase();
+    }
+
+    function addToCartFromEtalase(productId) {
+      const prod = state.products.find((p) => p.id === productId);
+      if (!prod) return;
+      prod.selected = true;
+      prod.qty = Math.max(1, (Number(prod.qty) || 0) + 1);
+      saveState();
+      renderMetrics();
+      renderShopeeProducts();
+      renderEtalase();
+      showToast(`"${prod.name}" ditambahkan ke keranjang (${prod.qty} pcs).`, 'success');
+    }
+
+    function renderEtalase() {
+      const gridEl = document.getElementById('etalaseGrid');
+      const badgeEl = document.getElementById('etalaseCatalogBadge');
+      const pageInfoEl = document.getElementById('etalasePageInfo');
+      const dotsEl = document.getElementById('etalasePageDots');
+      const prevBtn = document.getElementById('etalasePrevPage');
+      const nextBtn = document.getElementById('etalaseNextPage');
+      const jumpInput = document.getElementById('etalaseJumpInput');
+      if (!gridEl) return;
+
+      const catalog = getEtalaseCatalogForView();
+      if (badgeEl) {
+        badgeEl.textContent = `${catalog.length} produk • Unlimited Hal.`;
+      }
+
+      const pageSize = 4;
+      const totalPages = Math.max(1, Math.ceil(catalog.length / pageSize));
+      if (state.etalasePage > totalPages) {
+        state.etalasePage = totalPages;
+      }
+      if (state.etalasePage < 1) {
+        state.etalasePage = 1;
+      }
+      if (jumpInput) {
+        jumpInput.max = String(totalPages);
+      }
+
+      const startIdx = (state.etalasePage - 1) * pageSize;
+      const pageItems = catalog.slice(startIdx, startIdx + pageSize);
+
+      gridEl.innerHTML = pageItems.map((prod) => {
+        const price = Math.max(0, Number(prod.price) || 0);
+        const qty = Math.max(0, Number(prod.qty) || 0);
+        const sortTagLabel = state.etalaseSort === 'TERMURAH'
+          ? 'TERMURAH'
+          : state.etalaseSort === 'TERMAHAL'
+            ? 'TERMAHAL'
+            : 'TERLARIS';
+        const sortTagClass = state.etalaseSort === 'TERMURAH'
+          ? 'bg-lagoon-100 text-teal-800'
+          : state.etalaseSort === 'TERMAHAL'
+            ? 'bg-gold-100 text-gold-600'
+            : 'bg-skywash-100 text-ocean-600';
+        const storePill = prod.storeType === 'OFFICIAL'
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-gold-100 text-gold-600 truncate max-w-[140px]">🏅 ${escapeHtml(prod.storeName || 'Official')}</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cotton-100 text-cotton-500 truncate max-w-[140px]">🛡️ ${escapeHtml(prod.storeName || 'Trusted')}</span>`;
+
+        return `
+          <article class="smooth-panel rounded-2xl border border-slate-200/80 bg-white p-4 shadow-card flex flex-col justify-between gap-3">
+            <div>
+              <div class="flex items-center justify-between gap-1.5 mb-2.5">
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold ${sortTagClass}">${sortTagLabel}</span>
+                ${storePill}
+              </div>
+
+              <div
+                onclick="openShopeeStoreLink('${escapeHtml(prod.shopUrl)}')"
+                class="w-full h-32 rounded-xl overflow-hidden border border-slate-200/70 bg-skywash-50 cursor-pointer mb-3"
+              >
+                ${renderProductPhotoImg(prod.icon, prod.name, 'w-full h-full object-cover')}
+              </div>
+
+              <a
+                href="${escapeHtml(prod.shopUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-xs sm:text-sm font-bold text-slate-950 hover:text-ocean-500 transition line-clamp-2 block"
+              >
+                ${escapeHtml(prod.name)}
+              </a>
+              <p class="text-[11px] text-slate-500 mt-1">${escapeHtml(prod.variant)}</p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div>
+                <div class="text-sm font-extrabold text-ocean-600">${formatRupiah(price)}</div>
+                <div class="text-[11px] text-slate-500">Di keranjang: <strong>${qty}</strong></div>
+              </div>
+              <button
+                type="button"
+                onclick="addToCartFromEtalase('${prod.id}')"
+                class="no-print px-3 py-1.5 rounded-xl text-xs font-bold bg-ocean-500 hover:bg-ocean-600 text-white transition cursor-pointer"
+              >
+                + Keranjang
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      if (pageInfoEl) {
+        pageInfoEl.textContent = `Halaman ${state.etalasePage} dari ${totalPages}`;
+      }
+      if (prevBtn) {
+        prevBtn.disabled = state.etalasePage <= 1;
+      }
+      if (nextBtn) {
+        nextBtn.disabled = state.etalasePage >= totalPages;
+      }
+      if (dotsEl) {
+        dotsEl.innerHTML = Array.from({ length: totalPages }, (_v, idx) => {
+          const pageNum = idx + 1;
+          const active = pageNum === state.etalasePage;
+          return `
+            <button
+              type="button"
+              onclick="goToEtalasePage(${pageNum})"
+              class="w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${active ? 'bg-ocean-500 text-white' : 'bg-skywash-50 text-slate-700 hover:bg-skywash-100'}"
+            >
+              ${pageNum}
+            </button>
+          `;
+        }).join('');
+      }
+    }
+
+    function renderAll() {
+      const budgetInput = document.getElementById('budgetInput');
+      if (budgetInput && document.activeElement !== budgetInput) {
+        budgetInput.value = Number(state.budget) || 0;
+      }
+
+      document.querySelectorAll('.stock-filter-btn').forEach((btn) => {
+        const active = btn.dataset.filter === state.stockFilter;
+        btn.className = active
+          ? 'stock-filter-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer'
+          : 'stock-filter-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer';
+      });
+
+      document.querySelectorAll('.badge-filter-btn').forEach((btn) => {
+        const active = btn.dataset.badge === state.shopeeBadgeFilter;
+        btn.className = active
+          ? 'badge-filter-btn toggle-glass toggle-glass-active px-2.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer'
+          : 'badge-filter-btn toggle-glass px-2.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer';
+      });
+
+      document.querySelectorAll('.etalase-tab-btn').forEach((btn) => {
+        const active = btn.dataset.tab === state.etalaseTab;
+        btn.className = active
+          ? 'etalase-tab-btn toggle-glass toggle-glass-active px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer'
+          : 'etalase-tab-btn toggle-glass px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer';
+      });
+
+      document.querySelectorAll('.etalase-sort-btn').forEach((btn) => {
+        const active = btn.dataset.sort === state.etalaseSort;
+        btn.className = active
+          ? 'etalase-sort-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer'
+          : 'etalase-sort-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer';
+      });
+
+      document.querySelectorAll('.etalase-store-btn').forEach((btn) => {
+        const active = btn.dataset.store === state.etalaseStoreFilter;
+        btn.className = active
+          ? 'etalase-store-btn toggle-glass toggle-glass-active px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer'
+          : 'etalase-store-btn toggle-glass px-3 py-1 rounded-xl text-xs font-bold transition cursor-pointer';
+      });
+
+      renderRealtimeHeader();
+      renderProfilePortal();
+      renderMetrics();
+      renderInventory();
+      renderShopeeProducts();
+      renderEtalase();
+    }
+
+    function bindEvents() {
+      const budgetInput = document.getElementById('budgetInput');
+      if (budgetInput) {
+        budgetInput.addEventListener('input', (e) => {
+          state.budget = Math.max(0, Number(e.target.value) || 0);
+          saveState();
+          renderMetrics();
+        });
+      }
+
+      const addForm = document.getElementById('addItemForm');
+      if (addForm) {
+        addForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById('newItemName');
+          const catInput = document.getElementById('newItemCategory');
+          const qtyInput = document.getElementById('newItemQty');
+
+          const name = (nameInput?.value || '').trim();
+          if (!name) {
+            showToast('Masukkan nama barang terlebih dahulu.', 'warning');
+            return;
+          }
+
+          const qty = Math.max(0, Math.floor(Number(qtyInput?.value) || 0));
+          const category = catInput?.value || 'Dapur & Bumbu';
+          const iconMap = {
+            'Dapur & Bumbu': 'spice',
+            'Laundry': 'detergent',
+            'Bahan Pokok': 'cooking_oil',
+            'Tisu & Harian': 'tissue',
+            'Skincare': 'skincare'
+          };
+          const icon = iconMap[category] || 'dish_soap';
+
+          state.inventory.unshift({
+            id: 'inv-' + Date.now(),
+            name,
+            category,
+            qty,
+            minQty: 0,
+            targetQty: Math.max(2, qty + 2),
+            unit: 'pcs',
+            icon,
+            linkedKeyword: name.toLowerCase(),
+            shopUrl: 'https://shopee.co.id/search?keyword=' + encodeURIComponent(name)
+          });
+
+          saveState();
+          renderAll();
+          addForm.reset();
+          if (qtyInput) qtyInput.value = '0';
+          showToast(`"${name}" ditambahkan ke stok bulanan.`, 'success');
+        });
+      }
+
+      document.querySelectorAll('.stock-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.stockFilter = btn.dataset.filter || 'ALL';
+          saveState();
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.badge-filter-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.shopeeBadgeFilter = btn.dataset.badge || 'ALL';
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.etalase-tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.etalaseTab = btn.dataset.tab || 'ALL';
+          state.etalasePage = 1;
+          saveState();
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.etalase-sort-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.etalaseSort = btn.dataset.sort || 'TERLARIS';
+          state.etalasePage = 1;
+          saveState();
+          renderAll();
+        });
+      });
+
+      document.querySelectorAll('.etalase-store-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          state.etalaseStoreFilter = btn.dataset.store || 'ALL';
+          state.etalasePage = 1;
+          saveState();
+          renderAll();
+        });
+      });
+
+      const prevEtalaseBtn = document.getElementById('etalasePrevPage');
+      if (prevEtalaseBtn) {
+        prevEtalaseBtn.addEventListener('click', () => {
+          goToEtalasePage(state.etalasePage - 1);
+        });
+      }
+
+      const nextEtalaseBtn = document.getElementById('etalaseNextPage');
+      if (nextEtalaseBtn) {
+        nextEtalaseBtn.addEventListener('click', () => {
+          goToEtalasePage(state.etalasePage + 1);
+        });
+      }
+
+      const jumpBtn = document.getElementById('etalaseJumpBtn');
+      const jumpInput = document.getElementById('etalaseJumpInput');
+      if (jumpBtn && jumpInput) {
+        jumpBtn.addEventListener('click', () => {
+          const targetPage = Math.max(1, Math.floor(Number(jumpInput.value) || 1));
+          goToEtalasePage(targetPage);
+          jumpInput.value = String(state.etalasePage);
+        });
+        jumpInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const targetPage = Math.max(1, Math.floor(Number(jumpInput.value) || 1));
+            goToEtalasePage(targetPage);
+            jumpInput.value = String(state.etalasePage);
+          }
+        });
+      }
+
+      const searchInput = document.getElementById('shopeeSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          state.shopeeSearch = e.target.value || '';
+          renderShopeeProducts();
+        });
+      }
+
+      const autoSelectBtn = document.getElementById('autoSelectUrgentBtn');
+      if (autoSelectBtn) {
+        autoSelectBtn.addEventListener('click', autoSelectUrgentProducts);
+      }
+
+      const refreshPriceBtn = document.getElementById('refreshRealtimePriceBtn');
+      if (refreshPriceBtn) {
+        refreshPriceBtn.addEventListener('click', () => {
+          runRealtimePriceTick(true);
+        });
+      }
+
+      const toggleAutoSyncBtn = document.getElementById('toggleAutoSyncBtn');
+      if (toggleAutoSyncBtn) {
+        toggleAutoSyncBtn.addEventListener('click', () => {
+          state.autoSync = !state.autoSync;
+          saveState();
+          configureAutoSyncTimer();
+          renderRealtimeHeader();
+          showToast(
+            state.autoSync ? 'Auto-sync harga realtime setiap 15 detik diaktifkan.' : 'Auto-sync harga realtime dijeda.',
+            'info'
+          );
+        });
+      }
+
+      const logoutBtn = document.getElementById('logoutProfileBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          saveState();
+          isLoggedOutToPortal = true;
+          activeProfileId = '';
+          activePinPromptProfileId = '';
+          localStorage.removeItem(ACTIVE_PROFILE_KEY);
+          renderAll();
+          showToast('Anda keluar ke halaman utama. Silakan pilih atau buat profil.', 'info', 'portal');
+        });
+      }
+
+      const createProfileForm = document.getElementById('createProfileForm');
+      if (createProfileForm) {
+        createProfileForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById('newProfileNameInput');
+          const usernameInput = document.getElementById('newProfileUsernameInput');
+          const genderInput = document.getElementById('newProfileGenderInput');
+          const pinInput = document.getElementById('newProfilePinInput');
+          const val = nameInput?.value || '';
+          const uname = usernameInput?.value || '';
+          const gender = genderInput?.value || 'female';
+          const pin = pinInput?.value || '';
+          createProfileAndEnter(val, uname, pin, gender);
+          if (nameInput) nameInput.value = '';
+          if (usernameInput) usernameInput.value = '';
+          if (pinInput) pinInput.value = '';
+          closeCreateProfilePanel();
+        });
+      }
+
+      const closeCreateBtn = document.getElementById('closeCreateProfileBtn');
+      if (closeCreateBtn) {
+        closeCreateBtn.addEventListener('click', closeCreateProfilePanel);
+      }
+
+      const closeToastBtn = document.getElementById('closeToastBtn');
+      if (closeToastBtn) {
+        closeToastBtn.addEventListener('click', () => {
+          document.getElementById('toastBanner')?.classList.add('hidden');
+        });
+      }
+
+      const closePortalToastBtn = document.getElementById('closePortalToastBtn');
+      if (closePortalToastBtn) {
+        closePortalToastBtn.addEventListener('click', () => {
+          document.getElementById('portalToastBanner')?.classList.add('hidden');
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      bindEvents();
+      renderAll();
+      configureAutoSyncTimer();
+    });
+  </script>
+</body>
+</html>
